@@ -46,10 +46,7 @@ Response rendered back in chat UI
 - Local LLM inference — no external API calls, no per-token cost
 - Every conversation logged as a support ticket in PostgreSQL (five fields: [list your actual schema fields here])
 
-## Known Issues
 
-- **Category classification is unreliable.** The model sometimes returns a category and response unrelated to the actual user message — e.g. "i can't login" was classified as "cancellation" instead of "account_access." Confirmed via raw model output, not a parsing bug (the regex correctly extracts what the model returns). Likely cause: zero-shot classification with reasoning mode disabled (`think: false`) gives the model no room to self-correct. Planned fix: add few-shot examples to the prompt, or re-enable reasoning mode and accept the latency tradeoff.
-- **No conversation memory yet.** Each message is processed independently.
   
 ## Setup
 
