@@ -4,6 +4,19 @@ const chatMessages = document.getElementById("chat-messages");
 
 const BACKEND_URL = "http://localhost:3000/chat";
 
+// ==============================
+// Generate or Reuse Session ID
+// ==============================
+
+let sessionId = localStorage.getItem("sessionId");
+
+if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("sessionId", sessionId);
+}
+
+console.log("Session ID:", sessionId);
+
 // Send button
 sendButton.addEventListener("click", sendMessage);
 
@@ -34,6 +47,7 @@ async function sendMessage() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                sessionId: sessionId,
                 message: text
             })
         });

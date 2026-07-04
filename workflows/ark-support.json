@@ -1,0 +1,568 @@
+{
+  "name": "ARK AI - Customer Support",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ark-support",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        -16
+      ],
+      "id": "9b6e0232-1938-4a10-aef2-3e6a9df778ad",
+      "name": "Webhook",
+      "webhookId": "7f2f01f0-92ec-4c99-9438-3ec6100827dd"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  model: \"qwen3:8b\",\n  stream: false,\n  think: false,\n  prompt: $json.prompt\n}\n}}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        768,
+        16
+      ],
+      "id": "e06908a1-0abf-4dc5-a18f-ff6b52c06076",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.response || \"\";\n\nreturn [\n  {\n    json: {\n      customer_name: $('Edit Fields').first().json.customer_name || \"\",\n      customer_email: $('Edit Fields').first().json.customer_email || \"\",\n      message: $('Edit Fields').first().json.message || \"\",\n      session_id: $('Edit Fields').first().json.session_id,\n      category: \"general\",\n      ai_response: raw\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        -304
+      ],
+      "id": "88fb1475-6e4e-4839-990e-051c210f1e85",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "support_tickets",
+          "mode": "list",
+          "cachedResultName": "support_tickets"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}",
+            "customer_name": "={{ $('Edit Fields').item.json.customer_name }}",
+            "customer_email": "={{ $('Edit Fields').item.json.customer_email }}",
+            "ai_response": "={{ $('Code in JavaScript').item.json.ai_response }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ai_response",
+              "displayName": "ai_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1344,
+        -272
+      ],
+      "id": "40db879d-901b-4227-a643-cdf316beae30",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "fTWh4XW2T9NtyCLk",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c68dd5ee-f09b-4948-9ab1-2ba9b809ae07",
+              "name": "customer_name",
+              "value": "={{ $json.name}}",
+              "type": "string"
+            },
+            {
+              "id": "2cfe41b4-02f4-4ce4-9455-4839b34dd488",
+              "name": "customer_email",
+              "value": "={{ $json.body.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "a6bd97fb-daab-4eab-a82b-a61b40e1f738",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "77232d8c-f467-4ee4-8890-a1598123d3bc",
+              "name": "session_id",
+              "value": "={{ $json.body.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        80
+      ],
+      "id": "8d1d20f0-3152-4e5f-aa68-557a5755739e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1520,
+        -16
+      ],
+      "id": "c5db99a4-84bd-47c4-8db5-87a7257ee41c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "role": "user",
+            "session_id": "={{$json.session_id}}",
+            "message": "={{$json.message}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        176,
+        -176
+      ],
+      "id": "80613617-3dd3-4361-bbf1-0e33522f7b5f",
+      "name": "Insert User Message",
+      "credentials": {
+        "postgres": {
+          "id": "fTWh4XW2T9NtyCLk",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    role,\n    message\nFROM messages\nWHERE session_id = $1\nORDER BY created_at ASC;",
+        "options": {
+          "queryReplacement": "={{$('Edit Fields').item.json.session_id}}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        336,
+        32
+      ],
+      "id": "ec304aa5-c4e9-4767-a907-7c2149033706",
+      "name": "Get Conversation History",
+      "credentials": {
+        "postgres": {
+          "id": "fTWh4XW2T9NtyCLk",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all conversation messages\nconst messages = $input.all();\n\nlet conversation = \"\";\n\nfor (const item of messages) {\n\n    const role = item.json.role;\n    const message = item.json.message;\n\n    if (role === \"user\") {\n        conversation += `User: ${message}\\n\\n`;\n    } else {\n        conversation += `Assistant: ${message}\\n\\n`;\n    }\n\n}\n\nconst prompt = `\nYou are ARK AI, an intelligent AI customer support assistant for ARK AI.\n\nRules:\n\n- Always answer naturally and conversationally.\n- Use the previous conversation as memory.\n- If the user refers to something mentioned earlier, answer using the conversation history.\n- Never say you don't remember if the information exists in the conversation.\n- Be concise but helpful.\n- Maintain a friendly and professional tone.\n- If you don't know something that wasn't discussed, honestly say you don't know.\n\nConversation History:\n\n${conversation}\n\nAssistant:\n`;\n\nreturn [\n    {\n        json: {\n            prompt\n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -176
+      ],
+      "id": "52459ac0-6ae9-49a3-89b6-409b0b621d6b",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{$json.session_id}}",
+            "message": "={{$json.ai_response}}",
+            "role": "assistant"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1120,
+        -16
+      ],
+      "id": "fbc08931-ba1f-41e6-aeee-dcd4084062cc",
+      "name": "Insert Assistant Message",
+      "credentials": {
+        "postgres": {
+          "id": "fTWh4XW2T9NtyCLk",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Insert Assistant Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert User Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert User Message": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Assistant Message": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0f8a8fa5-5980-47d0-81b4-4e12cd8ae44f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6302d253bd01bcbf96ec91ab1b47ed5415813ed9eb5b02bbe466eff76dbf2845"
+  },
+  "nodeGroups": [],
+  "id": "DUZu2Nb009F3XGVA",
+  "tags": []
+}

@@ -1,14 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 const PORT = 3000;
+
 const WEBHOOK_URL =
-"https://rinse-upside-oyster.ngrok-free.dev/webhook/ark-support";
+    "https://rinse-upside-oyster.ngrok-free.dev/webhook/ark-support";
 
 app.get("/", (req, res) => {
     res.send("Backend Running");
@@ -19,10 +21,15 @@ app.post("/chat", async (req, res) => {
     try {
 
         const userMessage = req.body.message;
+        const sessionId = req.body.sessionId;
 
+        console.log("==================================");
+        console.log("Session ID:", sessionId);
         console.log("User:", userMessage);
+        console.log("==================================");
 
         const response = await axios.post(WEBHOOK_URL, {
+            sessionId: sessionId,
             message: userMessage
         });
 
@@ -49,6 +56,7 @@ app.post("/chat", async (req, res) => {
     }
 
 });
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
