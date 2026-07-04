@@ -1,15 +1,33 @@
-# ARK AI Customer Support Assistant
+# 🚀 ARK AI Customer Support Assistant
 
-An AI-powered customer support chat system built with open-source tools: a browser chat widget talks to an Express backend, which triggers an n8n workflow that runs a local LLM (Ollama / Qwen3 8B) and logs every ticket to PostgreSQL.
+A full-stack AI customer support chatbot built with HTML, CSS, JavaScript, Node.js, PostgreSQL, n8n, and Ollama.
 
-**Status: v1 — working end-to-end pipeline, active development.**
-Messages flow from the chat UI through to the database and back. Known issue: category classification currently defaults to "general" in most cases — this is being actively debugged (see Known Issues below).
+This project started as a simple chatbot and evolved into a context-aware AI assistant with persistent conversation memory.
 
----
+## ✨ Features
 
-## Architecture
+💬 Real-time AI chat interface
 
-```
+🧠 Persistent conversation memory
+
+🆔 Session-based chat history
+
+🗄️ PostgreSQL message storage
+
+🔄 Conversation retrieval & prompt construction
+
+🤖 Ollama (Qwen3:8B) integration
+
+⚡ n8n workflow automation
+
+📜 Ordered chat history
+
+👥 Multiple independent chat sessions
+
+📊 Support ticket logging
+
+## 🏗️ Architecture
+
 Frontend (HTML/CSS/JS)
         │
         ▼
@@ -26,67 +44,163 @@ PostgreSQL (support_tickets table)
         │
         ▼
 Response rendered back in chat UI
-```
-
-## Tech Stack
-
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** Node.js, Express.js
-- **Automation:** n8n
-- **AI:** Ollama running Qwen3 8B (local inference, `think: false` mode)
-- **Database:** PostgreSQL
-- **Tunneling:** ngrok (for exposing local n8n webhook)
-
-## Features
-
-- Chat interface for real-time-feeling user interaction
-- REST API endpoint (`POST /chat`) handling frontend requests
-- CORS handling via Express middleware
-- n8n workflow orchestrating the AI request → response cycle
-- Local LLM inference — no external API calls, no per-token cost
-- Every conversation logged as a support ticket in PostgreSQL (five fields: [list your actual schema fields here])
 
 
-  
-## Setup
+## 🧠 Conversation Memory Flow
 
-### Prerequisites
-- Node.js and npm
-- Docker (for PostgreSQL)
-- n8n instance (self-hosted or Docker)
-- Ollama installed locally with `qwen3:8b` pulled
-- ngrok account (for exposing n8n webhook publicly)
+Generate persistent Session ID
 
-### Steps
-1. Clone this repo
-2. Install backend dependencies: `npm install`
-3. Set your ngrok URL in `index.html` (see `NGROK_URL` constant at top of file)
-4. Start Ollama: `ollama serve`
-5. Start your PostgreSQL container
-6. Import the n8n workflow JSON (`/workflows/ark-support.json`) into your n8n instance
-7. Start ngrok tunnel pointing to n8n
-8. Start the Express server: `node server.js`
-9. Open `index.html` in a browser
+Store user message in PostgreSQL
+
+Retrieve previous conversation
+
+Build contextual prompt
+
+Send prompt to Ollama
+
+Store assistant response
+
+Return response to frontend
+
+## 🛠️ Tech Stack
+
+Layer
+
+	
+Technology
+
+
+Frontend
+	
+
+HTML, CSS, JavaScript
+
+
+Backend
+
+	
+Node.js, Express
+
+
+Automation
+
+	
+n8n
+
+
+Database
+
+	
+PostgreSQL
+
+
+LLM
+
+	
+Ollama + Qwen3:8B
+
+
+Containerization
+
+	
+Docker
+
 
 ## Project Structure
 
-```
 ├── index.html          # Chat widget frontend
 ├── server.js           # Express backend / REST API
 ├── workflows/
 │   └── ark-support.json  # n8n workflow export
 └── README.md
-```
 
-## Roadmap
+## 🚀 Local Setup
 
-- [ ] Fix category classification accuracy
-- [ ] Add conversation memory (context across messages)
-- [ ] Add basic auth / rate limiting on Express layer
-- [ ] Deploy frontend to GitHub Pages
+### 1. Clone the repository
 
-## Author
+git clone 
+https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
 
-Armaan Khan — building in public, Day 17 of an AI Automation Engineering journey.
-[GitHub](https://github.com/armaankhantech) · [Twitter/X](https://twitter.com/armaankhantech)
+cd ark-ai-customer-support-assistant
 
+### 2. Install backend dependencies
+
+cd backend
+
+npm install
+
+### 3. Start the backend
+
+node server.js
+
+### 4. Open the frontend
+
+Open frontend/index.html in your browser.
+
+## 📸 Demo
+
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/d5b4b224-e960-455c-a3f8-77e99cb63b93" />
+
+
+## 🎯 Day 18 Milestone
+
+✅ Persistent Session IDs
+
+✅ PostgreSQL Conversation Storage
+
+✅ Conversation Retrieval
+
+✅ Prompt Construction from Chat History
+
+✅ Context-Aware AI Responses
+
+✅ Multiple Independent Chat Sessions
+
+✅ Ordered Message History
+
+✅ Assistant Responses Stored in Database
+
+## 📚 What I Learned
+
+Building AI memory is not just storing messages.
+
+It requires session management, conversation retrieval, prompt engineering, response persistence, and workflow orchestration.
+
+## Known Issues
+
+
+Category classification is unreliable. The AI-driven category tagging currently returns "general" for most inputs instead of the correct category. Root cause under investigation — likely related to prompt structure sent to /api/generate vs /api/chat.
+No conversation memory yet. Each message is processed independently; the assistant does not retain context across turns. Planned for the next iteration.
+Response latency depends on local hardware running Ollama; not optimized for concurrent users.
+
+
+
+## Prerequisites
+
+Node.js and npm
+Docker (for PostgreSQL)
+n8n instance (self-hosted or Docker)
+Ollama installed locally with qwen3:8b pulled
+ngrok account (for exposing n8n webhook publicly)
+
+## 🔮 Next Steps
+
+Long-term memory summarization
+
+Context window optimization
+
+RAG (Retrieval-Augmented Generation)
+
+User authentication
+
+Admin dashboard
+
+Streaming responses
+
+## 👨‍💻 Author
+
+Armaan Khan
+
+Building AI systems in public 🚀
+
+GitHub: https://github.com/armaankhantech
