@@ -38,9 +38,11 @@ Frontend (HTML/CSS/JS)
 │
 
 ▼
+
 Express Backend (REST API — POST /chat)
 
 │
+
 ▼
 
 n8n Workflow (webhook trigger)
@@ -52,17 +54,29 @@ n8n Workflow (webhook trigger)
 │
 
 ├─▶ Retrieve full conversation history (by session_id)
+
 │
+
 ├─▶ Build prompt from history
+
 │
+
 ▼
+
 Ollama (Qwen3 8B) — local LLM inference
+
 │
+
 ├─▶ Insert assistant response → messages table
+
 │
+
 ├─▶ Insert ticket → support_tickets table
+
 │
+
 ▼
+
 Response returned to Express → rendered in chat UI
 
 
@@ -128,8 +142,10 @@ node server.js
 
 
 ## Project Structure
+
 ├── backend/
-│   ├── server.js          # Express backend / REST API
+
+│   ├── server.js         # Express backend / REST API
 │   ├── package.json
 │   └── package-lock.json
 ├── frontend/
