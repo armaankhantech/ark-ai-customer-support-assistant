@@ -146,7 +146,7 @@ node server.js
 ├── backend/
 
 │   ├── server.js         # Express backend / REST API
-│ ├── package.json
+│   ├── package.json
 │   └── package-lock.json
 
 
@@ -159,6 +159,7 @@ node server.js
 
 ├── workflows/
 │   └── ark-support.json   # n8n workflow export
+
 └── README.md
 
 ## 📸 Demo
