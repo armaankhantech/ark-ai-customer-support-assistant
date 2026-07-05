@@ -146,13 +146,17 @@ node server.js
 ├── backend/
 
 │   ├── server.js         # Express backend / REST API
-│   ├── package.json
+│ ├── package.json
 │   └── package-lock.json
+
+
 ├── frontend/
 │   ├── index.html         # Chat widget UI
 │   ├── script.js          # Session handling + fetch calls to backend
 │   ├── style.css
 │   └── assets/
+
+
 ├── workflows/
 │   └── ark-support.json   # n8n workflow export
 └── README.md
