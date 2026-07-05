@@ -145,7 +145,7 @@ node server.js
 
 ├── backend/
 
-│   ├── server.js         # Express backend / REST API
+│   ├── server.js          # Express backend / REST API
 │   ├── package.json
 │   └── package-lock.json
 
