@@ -1,12 +1,13 @@
-ARK AI Customer Support Assistant
+# ARK AI Customer Support Assistant
 
-An AI-powered customer support chat system: a browser chat widget talks to an Express backend, which triggers an n8n workflow that retrieves conversation history, grounds responses in real business data, runs a local LLM (Ollama / Qwen3 8B), and logs everything to PostgreSQL.
+An AI-powered customer support chat system: a browser chat widget talks to an Express backend, which triggers an n8n workflow that retrieves conversation history, runs a local LLM (Ollama / Qwen3 8B), and logs everything to PostgreSQL.
 
-Status: v1 — working end-to-end pipeline with conversation memory and business knowledge grounding, active development.
-The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues.
+**Status: v1 — working end-to-end pipeline with conversation memory, active development.**
+The assistant remembers prior messages within a session and responds with that context. Category classification is currently non-functional (hardcoded) — see Known Issues.
 
+---
 
-✨ Features
+## ✨ Features
 
 💬 Real-time AI chat interface
 
@@ -18,12 +19,6 @@ The assistant remembers prior messages within a session, answers business-specif
 
 🔄 Conversation retrieval & prompt construction
 
-🏢 Business knowledge grounding (companyInfo.js as single source of truth)
-
-🛡️ Hallucination fallback for out-of-scope questions
-
-📏 Rolling 20-message context window
-
 🤖 Ollama (Qwen3:8B) integration
 
 ⚡ n8n workflow automation
@@ -32,9 +27,12 @@ The assistant remembers prior messages within a session, answers business-specif
 
 👥 Multiple independent chat sessions
 
+
 📊 Support ticket logging
 
-Architecture
+
+## Architecture
+
 
 Frontend (HTML/CSS/JS)
 
@@ -43,7 +41,6 @@ Frontend (HTML/CSS/JS)
 ▼
 
 Express Backend (REST API — POST /chat)
-— passes companyInfo.js data along with every request
 
 │
 
@@ -57,21 +54,17 @@ n8n Workflow (webhook trigger)
 
 │
 
-├─▶ Retrieve conversation history (by session_id)
+├─▶ Retrieve full conversation history (by session_id)
 
 │
 
-├─▶ Count messages → apply rolling 20-message window
-
-│
-
-├─▶ Build prompt (company info + conversation history + current message)
+├─▶ Build prompt from history
 
 │
 
 ▼
 
-Ollama (Qwen3 8B) — local LLM inference, grounded in company data
+Ollama (Qwen3 8B) — local LLM inference
 
 │
 
@@ -87,15 +80,16 @@ Ollama (Qwen3 8B) — local LLM inference, grounded in company data
 
 Response returned to Express → rendered in chat UI
 
-🧠 Conversation Memory Flow
+
+## 🧠 Conversation Memory Flow
 
 Generate persistent Session ID
 
 Store user message in PostgreSQL
 
-Retrieve previous conversation (rolling 20-message window)
+Retrieve previous conversation
 
-Build contextual prompt grounded in company data
+Build contextual prompt
 
 Send prompt to Ollama
 
@@ -103,67 +97,59 @@ Store assistant response
 
 Return response to frontend
 
-Tech Stack
+## Tech Stack
+
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Backend:** Node.js, Express.js
+- **Automation:** n8n
+- **AI:** Ollama running Qwen3 8B (local inference, `think: false` mode)
+- **Database:** PostgreSQL — two tables: `messages` (conversation history) and `support_tickets` (ticket log)
+- **Tunneling:** ngrok (for exposing local n8n webhook)
+
+## Known Issues
+
+- **Category classification is not currently functional.** Category is hardcoded to `"general"` in the workflow. The original zero-shot classification attempt was unreliable (e.g. "i can't login" was classified as "cancellation" instead of "account_access") and was dropped entirely when the prompt pipeline was rebuilt to support conversation memory, rather than shipping two half-working features at once. Re-implementing classification without breaking memory is planned.
+- **No authentication on session IDs.** Session IDs are generated client-side and stored in `localStorage` with no server-side validation. Anyone who obtains or guesses a session ID can read or append to that conversation's history. Acceptable for a portfolio v1; would need fixing before any real deployment.
+- Response latency depends on local hardware running Ollama; not optimized for concurrent users.
 
 
-Frontend: HTML5, CSS3, JavaScript
-Backend: Node.js, Express.js
-Automation: n8n
-AI: Ollama running Qwen3 8B (local inference, think: false mode)
-Database: PostgreSQL — two tables: messages (conversation history) and support_tickets (ticket log)
-Tunneling: ngrok (for exposing local n8n webhook)
+## Setup
+
+### Prerequisites
+- Node.js and npm
+- Docker (for PostgreSQL)
+- n8n instance (self-hosted or Docker)
+- Ollama installed locally with `qwen3:8b` pulled
+- ngrok account (for exposing local n8n webhook)
 
 
-Known Issues
-
-
-Category classification is not currently functional. Category is hardcoded to "general" in the workflow. The original zero-shot classification attempt was unreliable (e.g. "i can't login" was classified as "cancellation" instead of "account_access") and was dropped entirely when the prompt pipeline was rebuilt to support conversation memory, rather than shipping two half-working features at once. Re-implementing classification without breaking memory is planned.
-No authentication on session IDs. Session IDs are generated client-side and stored in localStorage with no server-side validation. Anyone who obtains or guesses a session ID can read or append to that conversation's history. Acceptable for a portfolio v1; would need fixing before any real deployment.
-Business knowledge is static, not dynamic. companyInfo.js is hardcoded into the deployed backend. Updating business hours, services, or refund policy requires a code change and redeploy — there's no admin interface or database-backed config yet. Fine for a portfolio demo, not production-grade.
-Response latency depends on local hardware running Ollama; not optimized for concurrent users.
-
-
-Setup
-
-Prerequisites
-
-
-Node.js and npm
-Docker (for PostgreSQL)
-n8n instance (self-hosted or Docker)
-Ollama installed locally with qwen3:8b pulled
-ngrok account (for exposing local n8n webhook)
-
-
-Steps
-
-
-Clone this repo :
+### Steps
+1. Clone this repo :
 git clone :
 https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
 cd ark-ai-customer-support-assistant
-Install backend dependencies:
+
+2. Install backend dependencies:
 cd backend
 npm install
-Start Ollama: ollama serve
-Start your PostgreSQL container and create the messages and support_tickets tables
-Import the n8n workflow (workflows/ark-support.json) into your n8n instance
-Start an ngrok tunnel pointing to your n8n webhook
-In backend/server.js, set WEBHOOK_URL to your ngrok tunnel URL
-Edit backend/companyInfo.js with your own business details
-Start the Express server:
+3. Start Ollama: `ollama serve`
+4. Start your PostgreSQL container and create the `messages` and `support_tickets` tables
+5. Import the n8n workflow (`workflows/ark-support.json`) into your n8n instance
+6. Start an ngrok tunnel pointing to your n8n webhook
+7. In `backend/server.js`, set `WEBHOOK_URL` to your ngrok tunnel URL
+8. Start the Express server:
 node server.js
-Open frontend/index.html in a browser
+9. Open `frontend/index.html` in a browser
 
 
-Project Structure
+## Project Structure
 
 ├── backend/
 
 │   ├── server.js          # Express backend / REST API
-│   ├── companyInfo.js     # Business knowledge — single source of truth
 │   ├── package.json
 │   └── package-lock.json
+
 
 ├── frontend/
 │   ├── index.html         # Chat widget UI
@@ -171,36 +157,33 @@ Project Structure
 │   ├── style.css
 │   └── assets/
 
+
 ├── workflows/
 │   └── ark-support.json   # n8n workflow export
 
 └── README.md
 
-📸 Demo
+## 📸 Demo
+
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/d5b4b224-e960-455c-a3f8-77e99cb63b93" />
 
 
-
-📚 What I Learned
+## 📚 What I Learned
 
 Building AI memory is not just storing messages.
 
 It requires session management, conversation retrieval, prompt engineering, response persistence, and workflow orchestration.
 
-Grounding an AI in trusted data is not just adding more context to a prompt. It requires a single source of truth, a clear path for that data to reach the model on every request, and an explicit instruction for the model to admit what it doesn't know instead of guessing.
 
-Roadmap
+## Roadmap
 
+- [ ] Re-implement category classification without breaking conversation memory
+- [ ] Add authentication / server-side validation for session IDs
+- [ ] Add basic rate limiting on Express layer
+- [ ] Deploy frontend to GitHub Pages
+- [ ] Rolling conversation window / summarization for long sessions
 
- Re-implement category classification without breaking conversation memory
- Add authentication / server-side validation for session IDs
- Add basic rate limiting on Express layer
- Deploy frontend to GitHub Pages
- Rolling conversation window (last 20 messages)
- Conversation summarization for long sessions beyond the rolling window
- Move business knowledge from static file to database-backed config
-
-
-Author
+## Author
 
 Armaan Khan — building in public, AI Automation Engineering journey.
-GitHub · Twitter/X
+[GitHub](https://github.com/armaankhantech) · [Twitter/X](https://twitter.com/armaankhantech)
