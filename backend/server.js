@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const companyInfo = require("./companyInfo");
 
 const app = express();
 
@@ -28,10 +29,11 @@ app.post("/chat", async (req, res) => {
         console.log("User:", userMessage);
         console.log("==================================");
 
-        const response = await axios.post(WEBHOOK_URL, {
-            sessionId: sessionId,
-            message: userMessage
-        });
+       const response = await axios.post(WEBHOOK_URL, {
+        sessionId: sessionId,
+        message: userMessage,
+        company: companyInfo
+ }); 
 
         console.log("n8n Response:", response.data);
 
