@@ -53,7 +53,20 @@ Instead of simply sending messages to an AI model, the project focuses on buildi
 - Professional frontend interactions
 
 
+  ## 🎨 Premium UI
 
+Inspired by modern AI applications like:
+
+- ChatGPT
+- Claude
+- Gemini
+
+Current UI includes:
+
+- Modern chat layout
+- Rounded message bubbles
+- Responsive design
+- Professional color palette
 
 ## Architecture
 
