@@ -86,6 +86,14 @@ Current UI includes:
 
 ---
 
+## 🚧 Currently Working On
+
+- Streaming AI Responses
+- Timestamps
+- Auto-growing Textarea
+- Better Animations
+
+---
 
 
 ## Architecture
