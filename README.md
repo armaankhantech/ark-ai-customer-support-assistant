@@ -139,20 +139,35 @@ ngrok account (for exposing local n8n webhook)
 
 
 Clone this repo :
+
 git clone :
+
 https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
+
 cd ark-ai-customer-support-assistant
+
 Install backend dependencies:
+
 cd backend
+
 npm install
+
 Start Ollama: ollama serve
+
 Start your PostgreSQL container and create the messages and support_tickets tables
+
 Import the n8n workflow (workflows/ark-support.json) into your n8n instance
+
 Start an ngrok tunnel pointing to your n8n webhook
+
 In backend/server.js, set WEBHOOK_URL to your ngrok tunnel URL
+
 Edit backend/companyInfo.js with your own business details
+
 Start the Express server:
+
 node server.js
+
 Open frontend/index.html in a browser
 
 
