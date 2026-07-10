@@ -34,6 +34,27 @@ The assistant remembers prior messages within a session, answers business-specif
 
 📊 Support ticket logging
 
+## NEW FEATURES ADDED :
+
+Instead of simply sending messages to an AI model, the project focuses on building a **production-style chatbot**, including:
+
+- Premium chat UI
+  
+- AI workflow automation
+  
+- Long-term memory
+  
+- Session management
+  
+- Backend API
+  
+- Responsive user experience
+  
+- Professional frontend interactions
+
+
+
+
 ## Architecture
 
 Frontend (HTML/CSS/JS)
