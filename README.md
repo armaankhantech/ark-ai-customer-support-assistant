@@ -83,6 +83,7 @@ Current UI includes:
 - Shift + Enter
 - Error Handling
 - Premium Input Area
+- 
 
 ---
 
