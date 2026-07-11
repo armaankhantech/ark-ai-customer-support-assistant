@@ -73,7 +73,7 @@ Current UI includes:
 - Chat UI
 - Express Backend
 - n8n Integration
-- Ollama Integration
+- Ollama Integration.
 - Session IDs
 - Typing Indicator
 - Loading State
@@ -83,7 +83,7 @@ Current UI includes:
 - Shift + Enter
 - Error Handling
 - Premium Input Area
-- New
+- New UI Design
 
 ---
 
