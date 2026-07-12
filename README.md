@@ -27,6 +27,7 @@ The assistant remembers prior messages within a session and responds with that c
 
 👥 Multiple independent chat sessions
 
+
 📊 Support ticket logging
 
 

@@ -1,60 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ARK AI Customer Support</title>
 
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="chat-container">
+    <main class="app">
 
-        <!-- Header -->
-        <header class="chat-header">
+        <section class="chat-card">
 
-            <div class="logo">
-                🤖
-            </div>
+            <!-- ================= HEADER ================= -->
 
-            <div class="header-info">
-                <h1>ARK AI Support</h1>
-                <p>Online</p>
-            </div>
+            <header class="chat-header">
 
-        </header>
+                <div class="header-left">
 
-        <!-- Chat Messages -->
-        <main class="chat-messages" id="chat-messages">
+                    <div class="logo">
+                        🤖
+                    </div>
 
-            <div class="message bot-message">
-                Hello 👋 <br><br>
-                Welcome to ARK AI Customer Support.
-                How can I help you today?
-            </div>
+                    <div class="header-info">
 
-        </main>
+                        <h1>ARK AI</h1>
 
-        <!-- Chat Input -->
-        <footer class="chat-input">
+                        <div class="status">
 
-            <input
-                type="text"
-                id="user-input"
-                placeholder="Type your message..."
-            >
+                            <span class="status-dot"></span>
 
-            <button id="send-btn">
-                Send
-            </button>
+                            <span>Online</span>
 
-        </footer>
+                        </div>
 
-    </div>
+                    </div>
 
-    <script src="script.js"></script>
+                </div>
+
+            </header>
+
+            <!-- ================= CHAT ================= -->
+
+            <section
+                id="chat-messages"
+                class="chat-body">
+
+                <!-- JavaScript will render messages here -->
+
+            </section>
+
+            <!-- ================= TYPING ================= -->
+
+
+            <!-- ================= INPUT ================= -->
+
+            <form
+                id="chat-form"
+                class="chat-input">
+
+                <textarea
+                    id="message-input"
+                    rows="1"
+                    placeholder="Message ARK AI..."></textarea>
+
+                <button
+                    id="send-btn"
+                    type="submit">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+<script src="script.js"></script>
 
 </body>
-</html> 
+
+</html>
