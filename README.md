@@ -4,7 +4,7 @@ An AI-powered customer support chat system: a browser chat widget talks to an Ex
  
 **Status: v1 — working end-to-end pipeline with conversation memory, business knowledge grounding, and a premium streaming chat UI. Active development.**
  
-The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues.
+The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues. 
  
 ---
  
