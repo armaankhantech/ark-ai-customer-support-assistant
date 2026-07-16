@@ -417,5 +417,6 @@ Building a streaming, markdown-aware chat UI also surfaced a subtler lesson: ren
 ## Author
  
 Armaan Khan — building in public, AI Automation Engineering journey.
-[GitHub](https://github.com/armaankhantech) · [Twitter/X](https://twitter.com/armaankhantech)
+[GitHub](https://github.com/armaankhantech) 
+· [Twitter/X](https://twitter.com/armaankhantech)
  
