@@ -383,9 +383,10 @@ Frontend
 
 ## Chat Interface
 ```
+
 ```
 <img width="634" height="936" alt="Image" src="https://github.com/user-attachments/assets/6d208fd8-69f2-4397-96af-9daade3f1fd6" />
-
+<img width="1099" height="910" alt="Image" src="https://github.com/user-attachments/assets/4aacd55f-4b37-4762-acb4-349e96627646" />
 ```
 
 ``` 
