@@ -4,7 +4,7 @@ An AI-powered customer support chat system: a browser chat widget talks to an Ex
  
 **Status: v1 — working end-to-end pipeline with conversation memory, business knowledge grounding, and a premium streaming chat UI. Active development.**
  
-The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues. 
+The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues.
  
 ---
  
@@ -33,96 +33,175 @@ Inspired by modern AI applications like ChatGPT, Claude, and Gemini.
  
 - Premium purple UI with glassmorphism
 - Responsive layout
-- Distinct AI & user message bubbles
-- Auto-scroll to latest message
-- Auto-resizing input textarea
-- Enter to send, Shift+Enter for new line
-- Loading state with disabled input
-- Typing indicator
-- Streaming (typewriter) response effect
+- Streaming (typewriter) AI responses
 - Markdown rendering
-- Syntax highlighting for code blocks
-- Copy-to-clipboard button on code blocks
----
- 
-## ✅ Completed
- 
-**Frontend**
-- Premium purple UI
-- Glassmorphism
-- Responsive layout
-- AI & user message bubbles
-- Auto-scroll
-- Auto-resize
-- Enter to send / Shift+Enter
-- Loading state
-- Typing indicator
-- Streaming effect
-- Markdown rendering
-- Syntax highlighting
+- Syntax highlighted code blocks
 - Copy code button
-- Error handling
-**Backend**
-- Express API
-- n8n integration
-- Ollama integration
-- PostgreSQL conversation memory
-- Session handling
+- Auto-resizing textarea
+- Typing indicator
+- Auto-scroll
+- Session persistence using Local Storage
+
 ---
- 
-## 🚧 Currently Working On
- 
-- Better animations
-- Re-implementing category classification
-- Session ID authentication
+
+## ⚙ Backend Features
+
+- Layered Express.js architecture
+- REST API
+- Environment variables
+- Centralized configuration
+- Logger utility
+- Error handling middleware
+- Service layer
+- Controller layer
+- Route layer
+- PostgreSQL integration
+- n8n webhook integration
+
 ---
- 
- ## Architecture
- 
-```
-Frontend (HTML/CSS/JS)
-        │
-        ▼
-Express Backend (REST API — POST /chat)
-— passes companyInfo.js data along with every request
-        │
-        ▼
-n8n Workflow (webhook trigger)
-        │
-        ├─▶ Insert user message → messages table
-        │
-        ├─▶ Retrieve conversation history (by session_id)
-        │
-        ├─▶ Count messages → apply rolling 20-message window
-        │
-        ├─▶ Build prompt (company info + conversation history + current message)
-        │
-        ▼
-Ollama (Qwen3 8B) — local LLM inference, grounded in company data
-        │
-        ├─▶ Insert assistant response → messages table
-        │
-        ├─▶ Insert ticket → support_tickets table
-        │
-        ▼
-Response returned to Express → rendered in chat UI
+
+# 🏗 Architecture
 
 ```
-## 🧠 Conversation Memory Flow
- 
-1. Generate persistent Session ID
-2. Store user message in PostgreSQL
-3. Retrieve previous conversation (rolling 20-message window)
-4. Build contextual prompt grounded in company data
-5. Send prompt to Ollama
-6. Store assistant response
-7. Return response to frontend
+Frontend (HTML/CSS/JavaScript)
+            │
+            ▼
+Express REST API
+            │
+            ▼
+Routes
+            │
+            ▼
+Controller
+            │
+            ▼
+Service Layer
+            │
+            ▼
+n8n Workflow
+            │
+    ┌───────┼──────────────────────┐
+    │       │                      │
+    ▼       ▼                      ▼
+PostgreSQL  Prompt Builder    Ollama (Qwen3 8B)
+    │                              │
+    └──────────────┬───────────────┘
+                   ▼
+          AI Response Returned
+                   │
+                   ▼
+              Frontend UI
+```
+
 ---
- 
-## Tech Stack
- 
-| Layer | Tech |
-|---|---|
+
+# 📂 Project Structure
+
+```
+ARK AI
+│
+├── backend
+│   │
+│   ├── src
+│   │   │
+│   │   ├── config
+│   │   │     └── env.js
+│   │   │
+│   │   ├── controllers
+│   │   │     └── chatController.js
+│   │   │
+│   │   ├── services
+│   │   │     └── ollamaService.js
+│   │   │
+│   │   ├── routes
+│   │   │     └── chatRoutes.js
+│   │   │
+│   │   ├── middleware
+│   │   │     └── errorHandler.js
+│   │   │
+│   │   ├── database
+│   │   │     └── postgres.js
+│   │   │
+│   │   ├── prompts
+│   │   │     └── systemPrompt.js
+│   │   │
+│   │   ├── utils
+│   │   │     └── logger.js
+│   │   │
+│   │   └── app.js
+│   │
+│   ├── server.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── .env.example
+│   └── .gitignore
+│
+├── frontend
+│   ├── assets
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+│
+├── workflows
+│   └── ark-support.json
+│
+└── README.md
+```
+
+---
+
+# 🧠 Conversation Memory Flow
+
+```
+User Message
+
+↓
+
+Express API
+
+↓
+
+n8n Workflow
+
+↓
+
+Store User Message
+
+↓
+
+Retrieve Previous Messages
+
+↓
+
+Rolling Context Window
+
+↓
+
+Build AI Prompt
+
+↓
+
+Ollama (Qwen3 8B)
+
+↓
+
+Store AI Response
+
+↓
+
+Return Response
+
+↓
+
+Frontend
+```
+
+---
+
+# 🛠 Tech Stack
+
+| Layer | Technology |
+|---------|------------|
 | Frontend | HTML5, CSS3, JavaScript |
 | Backend | Node.js, Express.js |
 | Automation | n8n |
@@ -137,7 +216,7 @@ Response returned to Express → rendered in chat UI
 - **Category classification is not currently functional.** Category is hardcoded to `"general"` in the workflow. The original zero-shot classification attempt was unreliable (e.g. "i can't login" was classified as "cancellation" instead of "account_access") and was dropped entirely when the prompt pipeline was rebuilt to support conversation memory, rather than shipping two half-working features at once. Re-implementing classification without breaking memory is planned.
 - **No authentication on session IDs.** Session IDs are generated client-side and stored in `localStorage` with no server-side validation. Anyone who obtains or guesses a session ID can read or append to that conversation's history. Acceptable for a portfolio v1; would need fixing before any real deployment.
 - **Business knowledge is static, not dynamic.** `companyInfo.js` is hardcoded into the deployed backend. Updating business hours, services, or refund policy requires a code change and redeploy — there's no admin interface or database-backed config yet. Fine for a portfolio demo, not production-grade.
-
+- **Response latency depends on local hardware running Ollama;** not optimized for concurrent users.
 ---
  
 ## Setup
@@ -156,52 +235,164 @@ Response returned to Express → rendered in chat UI
    git clone https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
    cd ark-ai-customer-support-assistant
 ```
- 
-2. Install backend dependencies:
-```
-   cd backend
-   npm install
-```
- 
-3. Start Ollama:
-```
-   ollama serve
-```
- 
-4. Start your PostgreSQL container and create the `messages` and `support_tickets` tables.
-5. Import the n8n workflow (`workflows/ark-support.json`) into your n8n instance.
-6. Start an ngrok tunnel pointing to your n8n webhook.
-7. In `backend/server.js`, set `WEBHOOK_URL` to your ngrok tunnel URL.
-8. Edit `backend/companyInfo.js` with your own business details.
-9. Start the Express server:
-```
-   node server.js
-```
- 
-10. Open `frontend/index.html` in a browser.
+
 ---
- 
-## Project Structure
- 
+
+## 2. Install Backend Dependencies
+
+```bash
+cd backend
+
+npm install
 ```
-├── backend/
-│   ├── server.js          # Express backend / REST API
-│   ├── companyInfo.js     # Business knowledge — single source of truth
-│   ├── package.json
-│   └── package-lock.json
-│
-├── frontend/
-│   ├── index.html         # Chat widget UI
-│   ├── script.js          # Session handling, streaming, markdown + fetch calls
-│   ├── style.css
-│   └── assets/
-│
-├── workflows/
-│   └── ark-support.json   # n8n workflow export
-│
-└── README.md
+
+---
+
+## 3. Install Ollama
+
+Download Ollama and pull the model:
+
+```bash
+ollama pull qwen3:8b
 ```
- 
+
+Start Ollama:
+
+```bash
+ollama serve
+```
+
+---
+
+## 4. Start PostgreSQL
+
+Run PostgreSQL locally or using Docker.
+
+Create required tables:
+
+- messages
+- support_tickets
+
+---
+
+## 5. Import n8n Workflow
+
+Import
+
+```
+workflows/ark-support.json
+```
+
+into your n8n instance.
+
+---
+
+## 6. Create Environment Variables
+
+Create
+
+```
+backend/.env
+```
+
+Example:
+
+```env
+PORT=3000
+
+N8N_WEBHOOK_URL=https://your-ngrok-url/webhook/ark-support
+
+POSTGRES_HOST=localhost
+
+POSTGRES_USER=postgres
+
+POSTGRES_PASSWORD=your_password
+
+POSTGRES_DB=ark_ai
+
+OLLAMA_URL=http://localhost:11434
+```
+
+---
+
+## 7. Start Express Server
+
+```bash
+node server.js
+```
+
+---
+
+## 8. Open Frontend
+
+Open
+
+```
+frontend/index.html
+```
+
+inside your browser.
+
+---
+
+# 🔄 Request Flow
+
+```
+User
+
+↓
+
+Frontend
+
+↓
+
+Express Route
+
+↓
+
+Controller
+
+↓
+
+Service
+
+↓
+
+n8n Workflow
+
+↓
+
+PostgreSQL
+
+↓
+
+Ollama
+
+↓
+
+Express
+
+↓
+
+Frontend
+```
+
+---
+
+# 📸 Screenshots
+
+## Chat Interface
+
+> Add your latest screenshots here.
+
+```
+Screenshot 1
+
+Screenshot 2
+
+Screenshot 3
+```
+
 ---
  
 ## 📸 Demo

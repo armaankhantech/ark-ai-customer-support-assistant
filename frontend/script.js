@@ -168,7 +168,7 @@ async function streamMessage(text) {
     // Type one character at a time
     let current = "";
 
-for (let i = 0; i < text.length; i++) {
+   for (let i = 0; i < text.length; i++) {
 
     current += text.charAt(i);
 
@@ -192,7 +192,7 @@ for (let i = 0; i < text.length; i++) {
 }
 
 /* ===============================
-   Loading State
+   Loading Statex   
 =============================== */
 let typingElement = null;
 
@@ -324,6 +324,10 @@ async function sendMessage() {
     setLoading(false);
 
     if (!result) return;
+    console.log("RESULT:", result);
+console.log("TYPE:", typeof result);
+console.log("REPLY:", result.reply);
+console.log("AI:", result.ai_response);
 
     await streamMessage(result.reply);
 
