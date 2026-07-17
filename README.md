@@ -387,7 +387,7 @@ Frontend
 ```
 <img width="634" height="936" alt="Image" src="https://github.com/user-attachments/assets/6d208fd8-69f2-4397-96af-9daade3f1fd6" />
 <img width="1099" height="910" alt="Image" src="https://github.com/user-attachments/assets/4aacd55f-4b37-4762-acb4-349e96627646" />
- <img width="1911" height="929" alt="Image" src="https://github.com/user-attachments/assets/2e71caaf-d7b0-4a33-a4da-be5932dddb7a" />
+<img width="1911" height="929" alt="Image" src="https://github.com/user-attachments/assets/2e71caaf-d7b0-4a33-a4da-be5932dddb7a" />
 <img width="1919" height="915" alt="Image" src="https://github.com/user-attachments/assets/15a01f09-33d9-4f48-a48f-a58d30ed5afa" />
 
 ## 📚 What I Learned
