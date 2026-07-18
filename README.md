@@ -60,6 +60,25 @@ Inspired by modern AI applications like ChatGPT, Claude, and Gemini.
 
 ---
 
+## ✨ What's New
+Added a scalable PostgreSQL knowledge schema:
+-Company
+-Services
+-FAQs
+-Policies
+-Contacts
+
+- Created knowledgeService.js to load business knowledge dynamically
+-Refactored the n8n workflow into modular stages:
+-Prepare Knowledge
+-Prepare Conversation
+-Build Prompt
+-HTTP Request
+-Built a dynamic prompt builder that injects live business information from the database.
+-Eliminated hardcoded company data from the AI pipeline.
+
+---
+
 # 🏗 Architecture
 
 ```
