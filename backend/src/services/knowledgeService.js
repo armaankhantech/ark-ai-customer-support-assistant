@@ -64,29 +64,81 @@ async function getContacts(companyId) {
   return result.rows;
 }
 
-async function getKnowledge(companyId) {
-  const company = await getCompany(companyId);
-  const services = await getServices(companyId);
-  const faqs = await getFAQs(companyId);
-  const policies = await getPolicies(companyId);
-  const contacts = await getContacts(companyId);
+async function getKnowledgeByIntent(companyId, intent) {
 
-  return {
-    company,
-    services,
-    faqs,
-    policies,
-    contacts
-  };
+    switch (intent) {
+
+        case "business":
+            return {
+                company: await getCompany(companyId)
+            };
+
+        case "contacts":
+            return {
+                contacts: await getContacts(companyId)
+            };
+
+        case "services":
+            return {
+                services: await getServices(companyId)
+            };
+
+        case "policies":
+            return {
+                policies: await getPolicies(companyId)
+            };
+
+        case "faq":
+            return {
+                faqs: await getFAQs(companyId)
+            };
+
+        default:
+            return {
+                company: await getCompany(companyId)
+            };
+
+    }
+
 }
 
+async function getKnowledgeByIntent(companyId, intent) {
+
+    switch (intent) {
+
+        case "business":
+            return {
+                company: await getCompany(companyId)
+            };
+
+        case "contacts":
+            return {
+                contacts: await getContacts(companyId)
+            };
+
+        case "services":
+            return {
+                services: await getServices(companyId)
+            };
+
+        case "policies":
+            return {
+                policies: await getPolicies(companyId)
+            };
+
+        case "faq":
+            return {
+                faqs: await getFAQs(companyId)
+            };
+
+        default:
+            return {
+                company: await getCompany(companyId)
+            };
+
+    }
+
+}
 module.exports = {
-  getKnowledge
+    getKnowledgeByIntent
 };
-async function test() {
-  const knowledge = await getKnowledge(1);
-
-  console.log(JSON.stringify(knowledge, null, 2));
-}
-
-test();
