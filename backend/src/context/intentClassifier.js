@@ -19,7 +19,9 @@ const INTENT_KEYWORDS = {
         "contact",
         "support",
         "call",
-        "whatsapp"
+        "whatsapp",
+        "support",
+        "sales"
     ],
 
     services: [
