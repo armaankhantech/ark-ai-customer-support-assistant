@@ -67,6 +67,18 @@ Inspired by modern AI applications like ChatGPT, Claude, and Gemini.
 
 ---
 
+## 🚀 ARK AI Customer Support Assistant — Performance Benchmark :
+| Metric | Before (Day 26) | After (Day 27) | Improvement |
+| --- | --- | --- | --- |
+| **LLM Model** | Qwen3:4B | Llama 3.2:3B | ✅ Better fit for hardware |
+| **Prompt Size** | ~2157 characters | ~989 characters | **↓ 54%** |
+| **Context Strategy** | Entire Business Knowledge | Intent-Based Context Retrieval | ✅ Optimized |
+| **Knowledge Retrieval** | Load all tables | Load only relevant table | ✅ Efficient |
+| **Average Response Time** | ~31 seconds | **2.37 seconds** | **🚀 ~13× Faster** |
+| **Response Quality** | Reasoning leaked into output, inconsistent | Direct, concise, accurate | ✅ Improved |
+| **Architecture** | Static Knowledge Loading | Modular Context Engine | ✅ Production-ready |
+| **Scalability** | Difficult to extend | Ready for RAG & new data sources | ✅ Future-proof |
+
 ## ✨ What's New
 Added a scalable PostgreSQL knowledge schema:
 -Company
