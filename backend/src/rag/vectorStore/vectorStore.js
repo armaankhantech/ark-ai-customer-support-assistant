@@ -52,6 +52,31 @@ class VectorStore {
 
     }
 
+
+   async similaritySearch(queryEmbedding, topK = config.defaultTopK) {
+
+    const vector = `[${queryEmbedding.join(",")}]`;
+
+    const sql = `
+        SELECT
+            source,
+            chunk_index,
+            content,
+            embedding <=> $1::vector AS distance
+        FROM ${config.tableName}
+        ORDER BY embedding <=> $1::vector
+        LIMIT $2;
+    `;
+
+    const result = await pool.query(sql, [
+        vector,
+        topK
+    ]);
+
+    return result.rows;
+
+}
+
 }
 
 module.exports = new VectorStore();
