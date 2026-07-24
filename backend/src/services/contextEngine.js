@@ -1,26 +1,77 @@
 const { classifyIntent } = require("../context/intentClassifier");
 const { buildContextText } = require("../context/contextBuilder");
 const { getKnowledgeByIntent } = require("./knowledgeService");
+const contextRetriever = require("../context/contextRetriever");
+const shouldUseRag = require("../rag/shouldUseRag");
 
 async function buildContext(companyId, message) {
 
-    // Step 1: Detect intent
+    const greetings = [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "thanks",
+        "thank you",
+        "bye",
+        "goodbye"
+    ];
+
+    const normalizedMessage = message
+        .toLowerCase()
+        .trim();
+
+    if (greetings.includes(normalizedMessage)) {
+
+        return {
+            intent: "greeting",
+            knowledge: {},
+            businessContext: "",
+            documentContext: ""
+        };
+
+    }
+
     const intent = classifyIntent(message);
 
-    // Step 2: Retrieve relevant data
-    const knowledge = await getKnowledgeByIntent(companyId, intent);
+    const knowledge = await getKnowledgeByIntent(
+        companyId,
+        intent
+    );
 
-    // Step 3: Convert data into LLM-friendly text
-    const context = buildContextText(intent, knowledge);
+    const businessContext = buildContextText(
+        intent,
+        knowledge
+    );
+
+    let documentContext = "";
+
+    if (shouldUseRag(intent)) {
+
+        const result = await contextRetriever.retrieve(message);
+
+        documentContext = result.documentContext;
+
+    }
 
     return {
+
         intent,
+
         knowledge,
-        context
+
+        businessContext,
+
+        documentContext
+
     };
 
 }
 
 module.exports = {
+
     buildContext
+
 };

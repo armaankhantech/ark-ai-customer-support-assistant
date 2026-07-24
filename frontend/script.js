@@ -329,7 +329,23 @@ console.log("TYPE:", typeof result);
 console.log("REPLY:", result.reply);
 console.log("AI:", result.ai_response);
 
-    await streamMessage(result.reply);
+    console.log("FULL RESULT:", result);
+
+const reply =
+    result?.reply ||
+    result?.response ||
+    result?.ai_response ||
+    result?.output ||
+    result?.message;
+
+console.log("FINAL REPLY:", reply);
+
+if (!reply) {
+    console.error("No reply found!", result);
+    return;
+}
+
+await streamMessage(reply);
 
 
 }

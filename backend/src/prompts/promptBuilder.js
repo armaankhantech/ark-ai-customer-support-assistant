@@ -1,55 +1,39 @@
-// ======================================
-// Prompt Builder
-// ======================================
+const { SYSTEM_PROMPT } = require("./systemPrompt");
 
 function buildPrompt({
-
-    systemPrompt,
-
-    context,
-
+    businessContext,
+    documentContext,
     conversationHistory,
-
     userMessage
-
 }) {
 
     return `
+${SYSTEM_PROMPT}
 
-========================
-SYSTEM
-========================
+Business Context:
+${businessContext || "None"}
 
-${systemPrompt}
+Document Context:
+${documentContext || "None"}
 
-========================
-BUSINESS CONTEXT
-========================
+Conversation History:
+${conversationHistory || "None"}
 
-${context}
-
-========================
-CONVERSATION HISTORY
-========================
-
-${conversationHistory}
-
-========================
-CURRENT USER QUESTION
-========================
-
+User:
 ${userMessage}
 
-========================
-INSTRUCTIONS
-========================
+Instructions:
 
-Answer using ONLY the provided business context.
+• If the user asks about ARK AI, answer ONLY from the provided context.
 
-If the information is unavailable, politely say you don't know.
+• If the required company information is missing, reply exactly:
+"I'm sorry, but I don't have that information."
 
-Do not invent facts.
+• Never guess company information.
 
+• General knowledge questions may be answered normally.
+
+Assistant:
 `;
 
 }

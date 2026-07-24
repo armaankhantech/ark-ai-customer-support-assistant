@@ -13,9 +13,15 @@ async function chat(req, res , next) {
         );
         logger.info("AI response received successfully.");
 
-        res.json({
-            reply: result.ai_response
-        });
+const reply =
+    result.reply ||
+    result.ai_response ||
+    result.response ||
+    result.output;
+
+res.json({
+    reply
+});
 
     } catch (error) {
 

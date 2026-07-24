@@ -4,24 +4,27 @@
 
 const INTENT_KEYWORDS = {
 
+    // ===============================
+    // Business Intents
+    // ===============================
+
     business: [
+        "company",
+        "about",
         "hours",
         "open",
         "timing",
-        "working",
-        "office hours",
-        "company"
+        "working"
     ],
 
     contacts: [
+        "contact",
         "email",
         "phone",
-        "contact",
         "support",
+        "sales",
         "call",
-        "whatsapp",
-        "support",
-        "sales"
+        "whatsapp"
     ],
 
     services: [
@@ -29,6 +32,7 @@ const INTENT_KEYWORDS = {
         "services",
         "offer",
         "pricing",
+        "price",
         "automation",
         "chatbot",
         "consulting",
@@ -52,11 +56,58 @@ const INTENT_KEYWORDS = {
 
     conversation: [
         "continue",
+        "remember",
         "previous",
         "earlier",
         "before",
-        "remember",
         "last"
+    ],
+
+    // ===============================
+    // Technical / RAG Intents
+    // ===============================
+
+    architecture: [
+        "architecture",
+        "system architecture",
+        "backend",
+        "frontend",
+        "database",
+        "design"
+    ],
+
+    rag: [
+        "rag",
+        "retrieval",
+        "retrieval augmented generation",
+        "vector",
+        "embedding",
+        "pgvector",
+        "similarity search"
+    ],
+
+    context_engineering: [
+        "context engineering",
+        "context engine",
+        "context builder",
+        "context retriever",
+        "intent classifier"
+    ],
+
+    memory: [
+        "memory",
+        "conversation memory",
+        "long term memory",
+        "summary",
+        "summarization"
+    ],
+
+    handbook: [
+        "chapter",
+        "handbook",
+        "documentation",
+        "knowledge base",
+        "manual"
     ]
 
 };
