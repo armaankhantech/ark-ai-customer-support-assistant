@@ -438,14 +438,7 @@ Building a streaming, markdown-aware chat UI also surfaced a subtler lesson: ren
  
 ---
  
-## Roadmap
- 
-- [ ] Re-implement category classification without breaking conversation memory
-- [ ] Add authentication / server-side validation for session IDs
-- [ ] Add basic rate limiting on Express layer
-- [ ] Deploy frontend to GitHub Pages
-- [ ] Conversation summarization for long sessions beyond the rolling window
-- [ ] Move business knowledge from static file to database-backed config
+
 ---
  
 ## Author
