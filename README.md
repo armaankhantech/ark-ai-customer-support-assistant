@@ -236,7 +236,16 @@ Frontend
 
 ---
 
+# 🛠 Tech Stack
 
+| Layer | Technology |
+|---------|------------|
+| Frontend | HTML5, CSS3, JavaScript |
+| Backend | Node.js, Express.js |
+| Automation | n8n |
+| AI | Ollama running Qwen3 8B (local inference, `think: false` mode) |
+| Database | PostgreSQL — `messages` (conversation history), `support_tickets` (ticket log) |
+| Tunneling | ngrok (for exposing local n8n webhook) |
  
 ---
  ## Known Issues
