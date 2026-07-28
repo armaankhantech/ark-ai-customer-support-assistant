@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { buildContext } = require("./contextEngine");
+const { buildContext } = require("./contextEngineService");
 const { buildPrompt } = require("../prompts/promptBuilder");
 const { SYSTEM_PROMPT } = require("../prompts/systemPrompt");
 const env = require("../config/env");
@@ -11,6 +11,7 @@ const WEBHOOK_URL = env.N8N_WEBHOOK_URL;
 async function chat(sessionId, userMessage) {
 
     try {
+        const totalStart = Date.now();
 
         // =====================================
         // Direct Response Engine
@@ -29,17 +30,23 @@ async function chat(sessionId, userMessage) {
         // =====================================
         // Build Context
         // =====================================
+const contextStart = Date.now();
 
-        const contextResult = await buildContext(
-            1,
-            userMessage
-        );
+const contextResult = await buildContext(
+    1,
+    userMessage
+);
 
+console.log(
+    `⚡ Context Engine: ${Date.now() - contextStart} ms`
+);
         // =====================================
         // Build Final Prompt
         // =====================================
 
-        const prompt = buildPrompt({
+         const promptStart = Date.now();
+
+         const prompt = buildPrompt({
 
             systemPrompt: SYSTEM_PROMPT,
 
@@ -52,10 +59,15 @@ async function chat(sessionId, userMessage) {
             userMessage
 
         });
+        console.log(
+    `⚡ Prompt Builder: ${Date.now() - promptStart} ms`
+);
 
         // =====================================
         // Send Prompt to n8n
         // =====================================
+
+        const webhookStart = Date.now();
 
         const response = await axios.post(
     WEBHOOK_URL,
@@ -73,10 +85,26 @@ async function chat(sessionId, userMessage) {
         documentContext: contextResult.documentContext
     }
 );
-
+console.log(
+    `⚡ n8n Workflow: ${Date.now() - webhookStart} ms`
+);
         
-        console.log(response.data);
-        return response.data;
+        console.log("--------------------------------");
+console.log(
+    `✅ TOTAL: ${Date.now() - totalStart} ms`
+);
+console.log("--------------------------------");
+        const reply =
+    response.data.reply ||
+    response.data.response ||
+    response.data.ai_response ||
+    response.data.output ||
+    "";
+
+return {
+    success: true,
+    reply
+};
 
     }
 

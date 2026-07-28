@@ -1,9 +1,9 @@
 const path = require("path");
 
-const pdfLoader = require("./pdfLoader");
-const txtLoader = require("./txtLoader");
-const markdownLoader = require("./markdownLoader");
-const wordLoader = require("./wordLoader");
+const { loadPdf } = require("./pdfLoader");
+const { loadTxt } = require("./txtLoader");
+const { loadMarkdown } = require("./markdownLoader");
+const { loadWord } = require("./wordLoader");
 
 class DocumentLoader {
 
@@ -14,21 +14,27 @@ class DocumentLoader {
         switch (extension) {
 
             case ".pdf":
-                return pdfLoader.load(filePath);
+                return await loadPdf(filePath);
 
             case ".txt":
-                return txtLoader.load(filePath);
+                return await loadTxt(filePath);
 
             case ".md":
-                return markdownLoader.load(filePath);
+                return await loadMarkdown(filePath);
 
+            case ".doc":
             case ".docx":
-                return wordLoader.load(filePath);
+                return await loadWord(filePath);
 
             default:
-                throw new Error(`Unsupported file type: ${extension}`);
+                throw new Error(
+                    `Unsupported document type: ${extension}`
+                );
+
         }
+
     }
+
 }
 
 module.exports = new DocumentLoader();

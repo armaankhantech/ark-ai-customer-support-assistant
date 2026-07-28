@@ -29,4 +29,6 @@ class PdfLoader {
 
 }
 
-module.exports = new PdfLoader();
+module.exports = {
+    loadPdf
+};

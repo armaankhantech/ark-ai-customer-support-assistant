@@ -7,29 +7,26 @@ async function chat(req, res , next) {
         const { sessionId, message } = req.body;
         logger.info(`New message received from session: ${sessionId}`);
 
-        const result = await ollamaService.chat(
-            sessionId,
-            message
-        );
-        logger.info("AI response received successfully.");
+const result = await ollamaService.chat(
+    sessionId,
+    message
+);
 
-const reply =
-    result.reply ||
-    result.ai_response ||
-    result.response ||
-    result.output;
+res.json(result);
 
-res.json({
-    reply
-});
+    }
 
-    } catch (error) {
+    catch (error) {
 
     next(error);
+    }
+
+
+
 
 }
 
-}
+
 
 module.exports = {
     chat

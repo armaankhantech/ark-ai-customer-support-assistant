@@ -2,7 +2,7 @@
 // AI Service
 // =====================================
 
-const { buildContext } = require("./contextEngine");
+const { buildContext } = require("./contextEngineService");
 const { buildPrompt } = require("../prompts/promptBuilder");
 const { SYSTEM_PROMPT } = require("../prompts/systemPrompt");
 const { generateResponse } = require("./ollamaService");
