@@ -437,8 +437,8 @@ Grounding an AI in trusted data is not just adding more context to a prompt. It 
 Building a streaming, markdown-aware chat UI also surfaced a subtler lesson: rendering partial markdown character-by-character means intermediate states (like a half-typed code fence language tag) are technically invalid input to downstream parsers, and need to be handled deliberately rather than assumed away.
  
 ---
- 
-## Roadmap
+
+ ## Roadmap
  
 - [ ] Re-implement category classification without breaking conversation memory
 - [ ] Add authentication / server-side validation for session IDs
@@ -446,6 +446,7 @@ Building a streaming, markdown-aware chat UI also surfaced a subtler lesson: ren
 - [ ] Deploy frontend to GitHub Pages
 - [ ] Conversation summarization for long sessions beyond the rolling window
 - [ ] Move business knowledge from static file to database-backed config
+
 ---
  
 ## Author
