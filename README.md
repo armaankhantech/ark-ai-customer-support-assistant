@@ -8,7 +8,22 @@ The assistant remembers prior messages within a session, answers business-specif
  
 ---
  
-
+## ✨ Features
+ 
+- 💬 Real-time AI chat interface with streaming responses
+- 🧠 Persistent conversation memory
+- 🆔 Session-based chat history
+- 🗄️ PostgreSQL message storage
+- 🔄 Conversation retrieval & prompt construction
+- 🏢 Business knowledge grounding (`companyInfo.js` as single source of truth)
+- 🛡️ Hallucination fallback for out-of-scope questions
+- 📏 Rolling 20-message context window
+- 🤖 Ollama (Qwen3:8B) integration
+- ⚡ n8n workflow automation
+- 📜 Ordered chat history
+- 👥 Multiple independent chat sessions
+- 📊 Support ticket logging
+Instead of simply sending messages to an AI model, the project focuses on building a **production-style chatbot**, including AI workflow automation, long-term memory, session management, a real backend API, and a polished, responsive frontend.
  
 ---
  
