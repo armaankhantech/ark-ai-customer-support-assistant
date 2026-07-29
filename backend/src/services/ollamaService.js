@@ -59,7 +59,13 @@ console.log(
             userMessage
 
         });
-        console.log(
+       
+console.log("======================================");
+console.log("Prompt length:", prompt.length);
+console.log("======================================");
+
+// Existing log
+console.log(
     `⚡ Prompt Builder: ${Date.now() - promptStart} ms`
 );
 
@@ -69,20 +75,18 @@ console.log(
 
         const webhookStart = Date.now();
 
-        const response = await axios.post(
+const response = await axios.post(
     WEBHOOK_URL,
     {
         sessionId,
-
         message: userMessage,
-
         prompt,
-
         intent: contextResult.intent,
-
         businessContext: contextResult.businessContext,
-
         documentContext: contextResult.documentContext
+    },
+    {
+        timeout: 120000
     }
 );
 console.log(
