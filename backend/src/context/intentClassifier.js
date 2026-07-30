@@ -24,7 +24,9 @@ const INTENT_KEYWORDS = {
         "support",
         "sales",
         "call",
-        "whatsapp"
+        "whatsapp",
+        "Human Representative"
+       
     ],
 
     services: [

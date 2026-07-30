@@ -4,7 +4,7 @@ const { buildPrompt } = require("../prompts/promptBuilder");
 const { SYSTEM_PROMPT } = require("../prompts/systemPrompt");
 const env = require("../config/env");
 const directResponses = require("../rules");
-
+const logger = require("../utils/logger");
 const WEBHOOK_URL = env.N8N_WEBHOOK_URL;
 
 
@@ -22,9 +22,11 @@ async function chat(sessionId, userMessage) {
         if (directAnswer) {
 
      return {
+        success: true,
+        data: {
         reply: directAnswer
-     };
-
+     }
+    };
 }
        
         // =====================================
@@ -37,9 +39,11 @@ const contextResult = await buildContext(
     userMessage
 );
 
-console.log(
-    `⚡ Context Engine: ${Date.now() - contextStart} ms`
-);
+logger.info("Context Engine completed", {
+
+    duration: `${Date.now() - contextStart} ms`
+
+});
         // =====================================
         // Build Final Prompt
         // =====================================
@@ -60,14 +64,14 @@ console.log(
 
         });
        
-console.log("======================================");
-console.log("Prompt length:", prompt.length);
-console.log("======================================");
+logger.info("Prompt built", {
+    promptLength: prompt.length
+});
 
 // Existing log
-console.log(
-    `⚡ Prompt Builder: ${Date.now() - promptStart} ms`
-);
+logger.info("Prompt Builder completed", {
+    duration: `${Date.now() - promptStart} ms`
+});
 
         // =====================================
         // Send Prompt to n8n
@@ -89,15 +93,13 @@ const response = await axios.post(
         timeout: 120000
     }
 );
-console.log(
-    `⚡ n8n Workflow: ${Date.now() - webhookStart} ms`
-);
+logger.info("n8n Workflow completed", {
+    duration: `${Date.now() - webhookStart} ms`
+});
         
-        console.log("--------------------------------");
-console.log(
-    `✅ TOTAL: ${Date.now() - totalStart} ms`
-);
-console.log("--------------------------------");
+logger.info("Chat request completed", {
+    totalDuration: `${Date.now() - totalStart} ms`
+});
         const reply =
     response.data.reply ||
     response.data.response ||
@@ -107,7 +109,9 @@ console.log("--------------------------------");
 
 return {
     success: true,
-    reply
+    data: {
+        reply
+    }
 };
 
     }

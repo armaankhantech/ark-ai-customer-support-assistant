@@ -1,5 +1,5 @@
 const fs = require("fs/promises");
-
+const AppError = require("../../errors/AppError");  
 async function loadMarkdown(filePath) {
 
     try {
@@ -10,7 +10,11 @@ async function loadMarkdown(filePath) {
 
     } catch (error) {
 
-        throw new Error(`Failed to load Markdown file: ${error.message}`);
+        throw new AppError(
+            "Failed to load Markdown file.",
+            500,
+            "MARKDOWN_LOAD_FAILED"
+        );
 
     }
 

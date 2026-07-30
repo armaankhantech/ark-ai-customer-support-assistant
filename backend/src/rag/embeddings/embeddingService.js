@@ -1,12 +1,16 @@
 const axios = require("axios");
 const config = require("./embeddingConfig");
-
+const AppError = require("../../errors/AppError");
 class EmbeddingService {
 
     async generateEmbedding(text) {
 
         if (!text || !text.trim()) {
-            throw new Error("Text is required to generate an embedding.");
+            throw new AppError(
+         "Text is required to generate an embedding.",
+          400,
+         "TEXT_REQUIRED"
+      );
         }
 
         const { model, ollamaUrl, timeout } = config;
@@ -25,16 +29,23 @@ class EmbeddingService {
             );
 
             if (!response.data.embedding) {
-                throw new Error("Embedding was not returned by Ollama.");
+                throw new AppError(
+             "Embedding service did not return an embedding.",
+              502,
+             "EMBEDDING_GENERATION_FAILED"
+             );
+                
             }
 
             return response.data.embedding;
 
         } catch (error) {
 
-            throw new Error(
-                `Failed to generate embedding: ${error.message}`
-            );
+         throw new AppError(
+         "Failed to generate embedding.",
+          503,
+         "EMBEDDING_SERVICE_UNAVAILABLE"
+        );
 
         }
 

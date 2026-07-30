@@ -1,5 +1,5 @@
 const fs = require("fs/promises");
-
+const AppError = require("../../errors/AppError");  
 async function loadTxt(filePath) {
 
     try {
@@ -10,7 +10,11 @@ async function loadTxt(filePath) {
 
     } catch (error) {
 
-        throw new Error(`Failed to load TXT file: ${error.message}`);
+        throw new AppError(
+            "Failed to load TXT file.",
+            500,
+            "TXT_LOAD_FAILED"
+        );
 
     }
 

@@ -1,9 +1,9 @@
 const path = require("path");
-
 const { loadPdf } = require("./pdfLoader");
 const { loadTxt } = require("./txtLoader");
 const { loadMarkdown } = require("./markdownLoader");
 const { loadWord } = require("./wordLoader");
+const AppError = require("../../errors/AppError");
 
 class DocumentLoader {
 
@@ -27,8 +27,10 @@ class DocumentLoader {
                 return await loadWord(filePath);
 
             default:
-                throw new Error(
-                    `Unsupported document type: ${extension}`
+                throw new AppError(
+                    `Unsupported document type: ${extension}`,
+                    400,
+                    "UNSUPPORTED_DOCUMENT_TYPE"
                 );
 
         }

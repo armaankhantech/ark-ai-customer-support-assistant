@@ -319,34 +319,23 @@ async function sendMessage() {
 
     setLoading(true);
 
-    const result = await getAIResponse(text);
+const result = await getAIResponse(text);
 
-    setLoading(false);
+setLoading(false);
 
-    if (!result) return;
-    console.log("RESULT:", result);
-console.log("TYPE:", typeof result);
-console.log("REPLY:", result.reply);
-console.log("AI:", result.ai_response);
+if (!result) return;
 
-    console.log("FULL RESULT:", result);
+if (!result.success) {
 
-const reply =
-    result?.reply ||
-    result?.response ||
-    result?.ai_response ||
-    result?.output ||
-    result?.message;
+    console.error(result.message);
 
-console.log("FINAL REPLY:", reply);
+    appendMessage(result.message, "bot");
 
-if (!reply) {
-    console.error("No reply found!", result);
     return;
+
 }
 
-await streamMessage(reply);
-
+await streamMessage(result.data.reply);
 
 }
 
