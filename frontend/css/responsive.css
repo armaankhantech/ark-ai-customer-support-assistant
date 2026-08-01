@@ -1,0 +1,108 @@
+/* ============================================================
+   ARK AI — Responsive rules (responsive.css)
+   Verified breakpoints: 320 / 375 / 425 / 768 / 1024 / 1440 / 1920
+   Strategy: desktop 3-column → 2-column → off-canvas sidebar.
+   ============================================================ */
+
+/* ---- Ultra-wide: keep content from stretching ---------- */
+@media (min-width: 1600px) {
+  :root { --chat-max: 940px; --sidebar-w: 312px; }
+}
+
+/* ---- ≤1024px: tighter gutters --------------------------- */
+@media (max-width: 1024px) {
+  :root { --sidebar-w: 256px; }
+  .thread { padding: var(--s-5) var(--s-4) var(--s-4); }
+  .composer { padding: var(--s-3) var(--s-4) var(--s-4); }
+  .chat-header { padding-inline: var(--s-4); }
+}
+
+/* ---- ≤900px: sidebar becomes off-canvas drawer ---------- */
+@media (max-width: 900px) {
+  .app,
+  .app.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+
+  .sidebar {
+    position: fixed; z-index: 60;
+    inset: 0 auto 0 0;
+    width: min(300px, 86vw);
+    padding: var(--s-4);
+    transform: translateX(-102%);
+    transition: transform var(--dur-slow) var(--ease);
+    /* Drawer itself stays perfectly sharp — only the page behind blurs. */
+    backdrop-filter: none;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow-3);
+  }
+  .app.is-drawer-open .sidebar { transform: none; }
+
+  /* Desktop collapse must never affect the drawer */
+  .app.is-collapsed .sidebar {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    padding: var(--s-4);
+    border-right-color: var(--border);
+    transform: translateX(-102%);
+    transition: transform var(--dur-slow) var(--ease);
+  }
+  .app.is-collapsed.is-drawer-open .sidebar { transform: none; }
+
+  .drawer-toggle { display: inline-flex !important; }
+
+  .msg__body { max-width: 100%; }
+}
+
+
+/* ---- ≤768px (tablet portrait) --------------------------- */
+@media (max-width: 768px) {
+  .prompt-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s-2); }
+  .empty { padding-top: var(--s-4); }
+  .toasts { right: var(--s-4); bottom: var(--s-4); }
+}
+
+/* ---- ≤600px (large phones) ------------------------------ */
+@media (max-width: 600px) {
+  :root { --header-h: 60px; }
+  .thread { padding: var(--s-4) var(--s-3) var(--s-3); }
+  .thread__inner { gap: var(--s-5); }
+  .composer { padding: var(--s-2) var(--s-3) var(--s-4); }
+  .chat-header { padding: var(--s-2) var(--s-3); }
+  .bubble { padding: var(--s-3) var(--s-4); font-size: 0.9375rem; }
+  .prompt-grid { grid-template-columns: 1fr; }
+  .composer__hint { justify-content: center; }
+  .composer__hint .hide-sm { display: none; }
+  .msg { gap: var(--s-2); }
+}
+
+/* ---- ≤380px (iPhone SE / 320–375) ----------------------- */
+@media (max-width: 380px) {
+  :root { --fs-body: 0.9375rem; }
+  .avatar { width: 30px; height: 30px; flex-basis: 30px; }
+  .avatar--ai img { width: 18px; height: 18px; }
+  .brand__mark { width: 34px; height: 34px; flex-basis: 34px; }
+  .btn--icon { width: 36px; min-width: 36px; }
+  .composer-box { border-radius: var(--r-lg); }
+  .send-btn { width: 40px; height: 40px; }
+  .empty__title { letter-spacing: -0.02em; }
+  .toasts { left: var(--s-3); right: var(--s-3); max-width: none; }
+}
+
+/* ---- Short viewports (landscape phones) ----------------- */
+@media (max-height: 520px) {
+  .empty { padding-block: var(--s-3); }
+  .prompt-grid { margin-top: var(--s-4); }
+  .empty__sub { display: none; }
+}
+
+/* ---- Touch devices: comfortable 44px tap targets -------- */
+@media (pointer: coarse) {
+  .btn--icon, .act { min-width: 44px; min-height: 44px; }
+  .act { width: 44px; height: 44px; }
+}
+
+/* ---- Print --------------------------------------------- */
+@media print {
+  .sidebar, .composer, .chat-header__actions, .ambient, .toasts { display: none !important; }
+  body { background: #fff; color: #000; overflow: visible; }
+  .bubble { border: 1px solid #ccc; background: none !important; color: #000; box-shadow: none; }
+}

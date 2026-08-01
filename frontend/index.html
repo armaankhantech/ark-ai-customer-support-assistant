@@ -1,103 +1,293 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#060608" />
+    <title>ARK AI — Enterprise AI Assistant</title>
+    <meta
+      name="description"
+      content="ARK AI is an enterprise AI assistant with instant, accurate answers and conversation memory."
+    />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/logo/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="assets/logo/ark-logo.svg" />
 
-    <title>ARK AI Customer Support</title>
+    <!-- Single typeface: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Design system: tokens → motion → components → layout → responsive -->
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <body>
+    <a class="skip-link" href="#composer-field">Skip to message input</a>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-</head>
+    <!-- =========================================================
+         AMBIENT BACKGROUND
+         blobs → vignette → noise → particles (added by animations.js)
+         ========================================================= -->
+    <div class="ambient" aria-hidden="true" id="ambient">
+      <span class="ambient__blob ambient__blob--1"></span>
+      <span class="ambient__blob ambient__blob--2"></span>
+      <span class="ambient__blob ambient__blob--3"></span>
+      <span class="ambient__vignette"></span>
+      <span class="ambient__noise"></span>
+    </div>
 
-<body>
+    <div class="scrim" id="scrim"></div>
 
-    <main class="app">
+    <!-- ========================= APP SHELL ===================== -->
+    <div class="app" id="app">
+      <!-- ------------------------- SIDEBAR ------------------- -->
+      <aside class="sidebar" id="sidebar" aria-label="Conversations">
+        <div class="sidebar__top">
+          <div class="brand">
+            <span class="brand__mark">
+              <img src="assets/logo/ark-logo.svg" alt="" width="26" height="26" />
+            </span>
+            <span class="brand__text">
+              <span class="brand__name">ARK AI</span>
+              <span class="brand__sub">Enterprise AI Assistant</span>
+            </span>
+          </div>
+          <button
+            class="btn btn--ghost btn--icon btn--sm drawer-toggle"
+            id="drawerCloseBtn"
+            aria-label="Close menu"
+            data-icon="x"
+          ></button>
 
-        <section class="chat-card">
+        </div>
 
-            <!-- ================= HEADER ================= -->
+        <button class="btn-new" id="newChatBtn">
+          <span data-icon="plus" aria-hidden="true"></span>
+          <span>New chat</span>
+        </button>
 
-            <header class="chat-header">
+        <label class="search" for="searchInput">
+          <span class="sr-only">Search conversations</span>
+          <span data-icon="search" aria-hidden="true"></span>
+          <input
+            class="input"
+            id="searchInput"
+            type="search"
+            placeholder="Search conversations"
+            autocomplete="off"
+          />
+        </label>
 
-                <div class="header-left">
+        <div class="sidebar__scroll">
+          <section aria-labelledby="histLabel">
+            <p class="sidebar__label" id="histLabel">Recent</p>
+            <div class="sidebar__list a-stagger" id="historyList" role="list"></div>
+            <p
+              class="sidebar__label"
+              id="historyEmpty"
+              style="display: none; text-transform: none; letter-spacing: 0; padding-top: 8px"
+            >
+              No conversations match your search.
+            </p>
+          </section>
+        </div>
 
-                    <div class="logo">
-                        🤖
-                    </div>
+        <nav class="sidebar__foot" aria-label="Preferences">
+          <button class="nav-item" id="themeBtn" data-icon="moon">
+            <span class="nav-item__text">Theme</span>
+          </button>
+          <button class="nav-item" id="aboutBtn" data-icon="help">
+            <span class="nav-item__text">About ARK AI</span>
+          </button>
+        </nav>
+      </aside>
 
-                    <div class="header-info">
+      <!-- --------------------------- MAIN --------------------- -->
+      <main class="main" id="main">
+        <!-- Chat header -->
+        <header class="chat-header">
+          <div class="chat-header__left">
+            <button
+              class="btn btn--glass btn--icon menu-btn"
+              id="menuBtn"
+              data-tip="Toggle sidebar"
+              aria-label="Toggle sidebar"
+              aria-controls="sidebar"
+              aria-expanded="true"
+              data-icon="menu"
+            ></button>
 
-                        <h1>ARK AI</h1>
+            <span class="avatar avatar--ai" aria-hidden="true">
+              <img src="assets/logo/ark-logo.svg" alt="" width="22" height="22" />
+            </span>
+            <div class="chat-header__title">
+              <h1 class="chat-header__name" id="conversationTitle">New conversation</h1>
+              <p class="chat-header__meta">
+                <span class="dot dot--online" id="statusDot" aria-hidden="true"></span>
+                <span id="statusText">Connected</span>
+              </p>
+            </div>
+          </div>
 
-                        <div class="status">
-
-                            <span class="status-dot"></span>
-
-                            <span>Online</span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-            <!-- ================= CHAT ================= -->
-
-            <section
-                id="chat-messages"
-                class="chat-body">
-
-                <!-- JavaScript will render messages here -->
-
-            </section>
-
-            <!-- ================= TYPING ================= -->
-
-
-            <!-- ================= INPUT ================= -->
-
-            <form
-                id="chat-form"
-                class="chat-input">
-
-                <textarea
-                    id="message-input"
-                    rows="1"
-                    placeholder="Message ARK AI..."></textarea>
-
+          <div class="chat-header__actions">
+            <button
+              class="btn btn--glass btn--icon"
+              id="clearBtn"
+              data-tip="Clear conversation"
+              aria-label="Clear conversation"
+              data-icon="trash"
+            ></button>
+            <div class="dropdown">
+              <button
+                class="btn btn--glass btn--icon"
+                id="moreBtn"
+                aria-label="More actions"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                data-icon="more"
+              ></button>
+              <div class="dropdown__menu" id="moreMenu" role="menu" aria-labelledby="moreBtn">
                 <button
-                    id="send-btn"
-                    type="submit">
-
-                    <i class="fa-solid fa-paper-plane"></i>
-
+                  class="dropdown__item"
+                  role="menuitem"
+                  data-action="export"
+                  data-icon="download"
+                >
+                  Export transcript
                 </button>
+                <button class="dropdown__item" role="menuitem" data-action="about" data-icon="help">
+                  About ARK AI
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
 
-            </form>
-
+        <!-- Thread -->
+        <section
+          class="thread"
+          id="thread"
+          tabindex="0"
+          aria-label="Conversation"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions text"
+        >
+          <div class="thread__inner" id="threadInner">
+            <!-- Empty state (removed once a message is sent) -->
+            <div class="empty" id="emptyState">
+              <h2 class="empty__title">How can ARK AI help you today?</h2>
+              <p class="empty__sub">
+                Ask anything about products, policies, pricing or account support — ARK AI replies
+                instantly and remembers the conversation.
+              </p>
+              <div class="prompt-grid a-stagger" id="promptGrid"></div>
+            </div>
+          </div>
         </section>
 
-    </main>
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+        <!-- Composer -->
+        <div class="composer">
+          <div class="composer__inner">
+            <form class="composer-box" id="composer" autocomplete="off">
+              <label class="sr-only" for="composer-field">Message ARK AI</label>
+              <textarea
+                class="composer-box__field"
+                id="composer-field"
+                name="message"
+                rows="1"
+                placeholder="Ask ARK AI..."
+                aria-describedby="composerHint"
+              ></textarea>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+              <div class="composer-box__tools">
+                <button
+                  class="send-btn"
+                  id="sendBtn"
+                  type="submit"
+                  aria-label="Send message"
+                  disabled
+                >
+                  <span data-icon="send" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+            <p class="composer__hint" id="composerHint">
+              <span>ARK AI — ready to help. Please verify important information.</span>
+            </p>
 
-<script src="script.js"></script>
+          </div>
+        </div>
+      </main>
+    </div>
 
-</body>
+    <!-- ========================= MODAL ========================= -->
+    <div class="modal" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="modal__card">
+        <div class="modal__head">
+          <div>
+            <h2 class="modal__title" id="aboutTitle">About ARK AI</h2>
+            <p class="modal__text">
+              ARK AI is an enterprise AI assistant for fast, conversational answers — with memory
+              across the thread and markdown-rich responses.
+            </p>
+          </div>
+          <button
+            class="btn btn--ghost btn--icon"
+            data-close-modal
+            aria-label="Close"
+            data-icon="x"
+          ></button>
+        </div>
+        <div style="margin-top: 16px">
+          <div class="setting-row">
+            <span class="setting-row__label">Send message</span><span><kbd>Enter</kbd></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-row__label">New line</span
+            ><span><kbd>Shift</kbd> <kbd>Enter</kbd></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-row__label">New chat</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-row__label">Focus input</span><span><kbd>/</kbd></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-row__label">Toggle sidebar</span
+            ><span><kbd>Ctrl</kbd> <kbd>B</kbd></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-row__label">Close dialog</span><span><kbd>Esc</kbd></span>
+          </div>
+        </div>
+        <div class="modal__foot">
+          <button class="btn btn--primary" data-close-modal>Got it</button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Toast region (polite: never steals focus) -->
+    <div class="toasts" id="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Scripts: ui → chat → animations → app -->
+
+
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+
+  </body>
 </html>

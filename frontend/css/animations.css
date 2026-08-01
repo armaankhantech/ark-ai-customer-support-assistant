@@ -1,0 +1,114 @@
+/* ============================================================
+   ARK AI — Animations
+   CSS-only. Elegant, fast, never flashy.
+   All motion is disabled under prefers-reduced-motion.
+   ============================================================ */
+
+@keyframes ark-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ark-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ark-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ark-slide-right {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ark-slide-left {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Slow ambient drift for the background light blobs */
+@keyframes ark-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(3%, -4%, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes ark-pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+@keyframes ark-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+@keyframes ark-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ark-ripple {
+  to { transform: scale(3.2); opacity: 0; }
+}
+
+@keyframes ark-toast-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Utility animation classes ------------------------ */
+.a-fade      { animation: ark-fade-in var(--dur) var(--ease) both; }
+.a-fade-up   { animation: ark-fade-up var(--dur-slow) var(--ease) both; }
+.a-scale-in  { animation: ark-scale-in var(--dur) var(--ease) both; }
+.a-in-left   { animation: ark-slide-right var(--dur-slow) var(--ease) both; }
+.a-in-right  { animation: ark-slide-left var(--dur-slow) var(--ease) both; }
+
+/* Staggering helper used by prompt cards & history items */
+.a-stagger > * { animation: ark-fade-up var(--dur-slow) var(--ease) both; }
+.a-stagger > *:nth-child(1) { animation-delay: 40ms; }
+.a-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.a-stagger > *:nth-child(3) { animation-delay: 120ms; }
+.a-stagger > *:nth-child(4) { animation-delay: 160ms; }
+.a-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.a-stagger > *:nth-child(6) { animation-delay: 240ms; }
+
+/* Typing dots */
+.typing-dots { display: inline-flex; gap: 5px; align-items: center; }
+.typing-dots i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  animation: ark-dot 1.1s infinite var(--ease);
+}
+.typing-dots i:nth-child(2) { animation-delay: 0.14s; }
+.typing-dots i:nth-child(3) { animation-delay: 0.28s; }
+
+/* Button ripple element injected by ui.js */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  background: rgba(255, 255, 255, 0.32);
+  pointer-events: none;
+  animation: ark-ripple 620ms var(--ease) forwards;
+}
+
+/* Scroll reveal (IntersectionObserver adds .is-visible) */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* ---- Reduced motion ----------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
