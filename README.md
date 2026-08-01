@@ -44,26 +44,7 @@ Inspired by modern AI applications like ChatGPT, Claude, and Gemini.
 
 ---
 
-## ⚙ Backend Features
 
-- Layered Express.js architecture
-- REST API
-- Environment variables
-- Centralized configuration
-- Logger utility
-- Error handling middleware
-- Service layer
-- Controller layer
-- Route layer
-- PostgreSQL integration
-- n8n webhook integration
-- Rule-Based Intent Classifier
-- Intent-Specific Knowledge Retrieval
-- Modular Context Builder
-- Formatter Registry Pattern
-- Production-Ready Architecture
-- Reduced Prompt Size
-- Future-Ready Design for RAG Integration
 
 ---
 
