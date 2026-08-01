@@ -1,128 +1,75 @@
+/* ============================================================
+   ARK AI — api.js
+   REST API adapter
+   ============================================================ */
+
 window.API = (() => {
 
-    const BASE_URL = "http://localhost:3000";
+    const BASE_URL =
+        localStorage.getItem("ark.apiBase") ||
+        "http://localhost:3000";
 
 
-    // ==========================================
-    // SEND MESSAGE
-    // ==========================================
+    function url(path) {
+        return BASE_URL.replace(/\/$/, "") + path;
+    }
 
-    async function sendMessage(message) {
 
-        const sessionId = Session.getSessionId();
+    // =========================================================
+    // HEALTH
+    // =========================================================
 
-        const response = await fetch(`${BASE_URL}/chat`, {
+    async function health() {
 
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                sessionId,
-                message
-            })
-
-        });
+        const response = await fetch(
+            url("/health")
+        );
 
         if (!response.ok) {
-
             throw new Error(
-                `Chat request failed: ${response.status}`
+                `Health check failed: ${response.status}`
             );
+        }
 
+        return response.json();
+    }
+
+
+    // =========================================================
+    // ALL CONVERSATIONS
+    // =========================================================
+
+    async function getConversations() {
+
+        const response = await fetch(
+            url("/conversations?_=" + Date.now()),
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load conversations: ${response.status}`
+            );
         }
 
         const result = await response.json();
 
-
-        return result;
-
+        return Array.isArray(result.data)
+            ? result.data
+            : [];
     }
 
 
-    // ==========================================
-    // HEALTH
-    // ==========================================
-
-    async function health() {
-
-        const response =
-            await fetch(`${BASE_URL}/health`);
-
-        return response.json();
-
-    }
-
-
-    // ==========================================
-    // CURRENT SESSION HISTORY
-    // ==========================================
-
-    async function getHistory() {
-
-        const sessionId =
-            Session.getSessionId();
-
-        const response = await fetch(
-            `${BASE_URL}/history/${sessionId}`
-        );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Failed to load history."
-            );
-
-        }
-
-        return await response.json();
-
-    }
-
-
-    // ==========================================
-    // ALL CONVERSATIONS
-    // ==========================================
-
-    async function getConversations() {
-
-    const response = await fetch(
-    `${BASE_URL}/conversations?_=${Date.now()}`,
-    {
-        cache: "no-store"
-    }
-);
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Failed to load conversations: ${response.status}`
-            );
-
-        }
-
-        const result =
-            await response.json();
-
-
-        return result.data || [];
-
-    }
-
-
-    // ==========================================
+    // =========================================================
     // PUBLIC API
-    // ==========================================
+    // =========================================================
 
     return {
-
-        sendMessage,
         health,
-        getHistory,
         getConversations
-
     };
 
 })();

@@ -32,7 +32,7 @@ let conversations = [];
 async function loadConversations() {
     try {
 
-        const data = await window.API.getConversations();
+        const data = await API.getConversations();
 
         conversations = (data || []).map((conversation) => {
 
@@ -170,10 +170,7 @@ Chat.mount({
 
     onBusyChange: setBusyUI,
 
-    onExchange: async () => {
-        console.log("🔄 Refreshing sidebar from database...");
-        await loadConversations();
-    }
+
 });
     Chat.bindMessageActions(els.threadInner);
       await loadConversations();
@@ -251,14 +248,14 @@ async function restoreSession() {
         "</span></span></button>"
     ).join("");
 
-    els.promptGrid.addEventListener("click", (e) => {
+    els.promptGrid.addEventListener("click", async (e) => {
       const card = e.target.closest("[data-prompt]");
       if (!card) return;
       if (els.title.textContent === "New conversation") {
         els.title.textContent = card.dataset.prompt;
       }
-      Chat.send(card.dataset.prompt);
       resetField();
+      await Chat.send(card.dataset.prompt);
     });
   }
 
@@ -506,22 +503,25 @@ $("#clearBtn").addEventListener("click", async () => {
 
         await Chat.deleteConversation(currentSession);
 
-        // Clear frontend state
-        Chat.clear();
+// Clear frontend state
+Chat.clear();
 
-        // Create completely new conversation
-        Chat.newSession();
+// Create completely new conversation
+Chat.newSession();
 
-        // Restore hero
-        restoreEmptyState();
+// Remove deleted conversation from sidebar
+await loadConversations();
 
-        // Reset title
-        els.title.textContent = "New conversation";
+// Restore hero
+restoreEmptyState();
 
-        // Reset composer
-        resetField();
+// Reset title
+els.title.textContent = "New conversation";
 
-        UI.toast("Conversation deleted", "success");
+// Reset composer
+resetField();
+
+UI.toast("Conversation deleted", "success");
 
     } catch (error) {
 

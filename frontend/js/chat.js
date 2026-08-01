@@ -38,31 +38,52 @@ const url = (path) => config.apiBase.replace(/\/$/, "") + path;
   /* ---------------------------------------------------------
      Session management (persistent session ids)
      --------------------------------------------------------- */
-  const SESSION_KEY = "ark.sessionId";
+/* ---------------------------------------------------------
+   Session management
+   Single source of truth: Session module
+   --------------------------------------------------------- */
 
-  function makeSessionId() {
-    if (global.crypto && global.crypto.randomUUID) return global.crypto.randomUUID();
-    return "s-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+const SESSION_KEY = "ark.sessionId";
+
+function makeSessionId() {
+  if (global.crypto && global.crypto.randomUUID) {
+    return global.crypto.randomUUID();
   }
 
-  function sessionId() {
-    let id = localStorage.getItem(SESSION_KEY);
-    if (!id) {
-      id = makeSessionId();
-      localStorage.setItem(SESSION_KEY, id);
-    }
-    return id;
-  }
+  return (
+    "s-" +
+    Date.now().toString(36) +
+    Math.random().toString(36).slice(2, 10)
+  );
+}
 
-  function setSessionId(id) {
+function sessionId() {
+  let id = localStorage.getItem(SESSION_KEY);
+
+  if (!id) {
+    id = makeSessionId();
     localStorage.setItem(SESSION_KEY, id);
-    state.sessionId = id;
   }
 
-  function newSession() {
-    setSessionId(makeSessionId());
-    return state.sessionId;
+  return id;
+}
+
+function setSessionId(id) {
+  if (!id) {
+    id = makeSessionId();
   }
+
+  localStorage.setItem(SESSION_KEY, id);
+  state.sessionId = id;
+}
+
+function newSession() {
+  const id = makeSessionId();
+
+  setSessionId(id);
+
+  return id;
+}
 
   /* ---------------------------------------------------------
      State
@@ -315,9 +336,11 @@ async function streamAnswer(text) {
 
     const response = await fetch(url("/chat"), {
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify({
             message: text,
             sessionId: state.sessionId
@@ -325,11 +348,15 @@ async function streamAnswer(text) {
     });
 
     if (!response.ok) {
-        throw new Error("Streaming request failed: " + response.status);
+        throw new Error(
+            "Streaming request failed: " + response.status
+        );
     }
 
     if (!response.body) {
-        throw new Error("Streaming is not supported by this response.");
+        throw new Error(
+            "Streaming is not supported by this response."
+        );
     }
 
     const reader = response.body.getReader();
@@ -353,24 +380,29 @@ async function streamAnswer(text) {
             continue;
         }
 
-        // Remove "Thinking" ONLY when the first
-        // actual response content arrives.
+        // Remove "Thinking..." when first response arrives
         if (firstChunk) {
+
             hideTyping();
+
             beginStream();
+
             firstChunk = false;
         }
 
         appendStream(chunk);
     }
 
-    // If the backend returned nothing
+    // Backend returned no content
     if (firstChunk) {
+
         hideTyping();
+
         addMessage(
             "ai",
             "I couldn't find an answer for that yet."
         );
+
         return;
     }
 
@@ -394,7 +426,6 @@ async function loadHistory(id) {
         }
     );
 
-    console.log("ARK AI HISTORY RESPONSE:", data);
 
     const rows =
         Array.isArray(data)
@@ -435,14 +466,6 @@ async function openSession(id) {
     scrollToEnd(true);
 
     return rows;
-}
-
-function showHero() {
-    els.hero.classList.remove("hidden");
-}
-
-function hideHero() {
-    els.hero.classList.add("hidden");
 }
 
 
@@ -504,10 +527,7 @@ async function send(text) {
     // WAIT for backend/database/AI to finish
     await respond(clean);
 
-    // Refresh sidebar AFTER backend has finished
-    if (els.onExchange) {
-        await els.onExchange();
-    }
+  
 }
 async function respond(prompt) {
 
