@@ -1,12 +1,12 @@
 const requiredVariables = [
     "N8N_WEBHOOK_URL",
+    "N8N_MEMORY_WEBHOOK_URL",
     "POSTGRES_HOST",
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
     "POSTGRES_DB",
     "OLLAMA_URL"
 ];
-
 const missingVariables = requiredVariables.filter(
     (variable) => !process.env[variable]
 );
@@ -39,6 +39,9 @@ module.exports = Object.freeze({
         Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 30,
 
     N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
+
+    N8N_MEMORY_WEBHOOK_URL:
+    process.env.N8N_MEMORY_WEBHOOK_URL,
 
     POSTGRES_HOST: process.env.POSTGRES_HOST,
 

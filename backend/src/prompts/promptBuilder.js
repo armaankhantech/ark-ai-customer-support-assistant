@@ -4,6 +4,7 @@ function buildPrompt({
     businessContext,
     documentContext,
     conversationHistory,
+    conversationMemory,
     userMessage
 }) {
     
@@ -25,6 +26,15 @@ if (documentContext?.trim()) {
     sections.push(`
 Document Context:
 ${documentContext}
+    `.trim());
+
+}
+
+if (conversationMemory?.trim()) {
+
+    sections.push(`
+Long-Term Memory:
+${conversationMemory}
     `.trim());
 
 }

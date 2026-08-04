@@ -4,7 +4,7 @@ const pool = require("../database/postgres");
 const { buildContext } = require("./contextEngineService");
 const { buildPrompt } = require("../prompts/promptBuilder");
 const { SYSTEM_PROMPT } = require("../prompts/systemPrompt");
-
+const memoryService = require("./automationService");
 const env = require("../config/env");
 const directResponses = require("../rules");
 const logger = require("../utils/logger");
@@ -84,9 +84,11 @@ async function streamChat(sessionId, userMessage, onChunk) {
         const contextStart = Date.now();
 
         const contextResult = await buildContext(
-            1,
-            userMessage
-        );
+    1,
+    sessionId,
+    userMessage
+);
+
 
         logger.info("Context Engine completed", {
             duration: `${Date.now() - contextStart} ms`
@@ -99,21 +101,24 @@ async function streamChat(sessionId, userMessage, onChunk) {
 
         const promptStart = Date.now();
 
-        const prompt = buildPrompt({
+const prompt = buildPrompt({
 
-            systemPrompt: SYSTEM_PROMPT,
+    systemPrompt: SYSTEM_PROMPT,
 
-            businessContext:
-                contextResult.businessContext,
+    businessContext:
+        contextResult.businessContext,
 
-            documentContext:
-                contextResult.documentContext,
+    documentContext:
+        contextResult.documentContext,
 
-            conversationHistory: "",
+    conversationMemory:
+        contextResult.conversationMemory,
 
-            userMessage
+    conversationHistory: "",
 
-        });
+    userMessage
+
+});
 
         logger.info("Prompt built", {
             promptLength: prompt.length
@@ -245,6 +250,13 @@ async function streamChat(sessionId, userMessage, onChunk) {
             );
 
         }
+
+        memoryService
+    .sendConversation(
+        sessionId,
+        userMessage,
+        fullReply
+    );
 
 
         /* ----------------------------------------------------
@@ -384,6 +396,10 @@ if (directAnswer) {
          */
 
         const response =
+        console.log("===== N8N DEBUG =====");
+        console.log("Webhook URL:", env.N8N_WEBHOOK_URL);
+        console.log("Session:", sessionId);
+        console.log("Message:", userMessage);
             await axios.post(
                 env.N8N_WEBHOOK_URL,
                 {

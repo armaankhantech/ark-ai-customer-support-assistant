@@ -3,8 +3,9 @@ const { buildContextText } = require("../context/contextBuilder");
 const { getKnowledgeByIntent } = require("./knowledgeService");
 const contextRetriever = require("../context/contextRetriever");
 const shouldUseRag = require("../rag/shouldUseRag");
+const { getConversationMemory } = require("./memoryService");
 
-async function buildContext(companyId, message) {
+async function buildContext(companyId, sessionId, message) {
 
     const greetings = [
         "hello",
@@ -56,17 +57,26 @@ async function buildContext(companyId, message) {
 
     }
 
-    return {
+    const conversationMemory =
+    await getConversationMemory(sessionId);
 
-        intent,
+    console.log("\n========== LONG TERM MEMORY ==========");
+console.log(conversationMemory || "NO MEMORY FOUND");
+console.log("=====================================\n");
 
-        knowledge,
+return {
 
-        businessContext,
+    intent,
 
-        documentContext
+    knowledge,
 
-    };
+    businessContext,
+
+    documentContext,
+
+    conversationMemory
+
+};
 
 }
 

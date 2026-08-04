@@ -19,71 +19,8 @@ Backend contract:
   "use strict";
 
   const { escapeHtml, icon, copyText, toast, formatTime } = global.ARKUI;
-
-  /* ---------------------------------------------------------
-     Configuration
- * `ark.apiBase` lets the UI point to the Express backend.
- * Default: http://localhost:3000
-     --------------------------------------------------------- */
-   const config = {
-    apiBase:
-    localStorage.getItem("ark.apiBase") ||
-    "http://localhost:3000",
-
-  timeoutMs: 60000,
-};
-
-const url = (path) => config.apiBase.replace(/\/$/, "") + path;
-
-  /* ---------------------------------------------------------
-     Session management (persistent session ids)
-     --------------------------------------------------------- */
-/* ---------------------------------------------------------
-   Session management
-   Single source of truth: Session module
-   --------------------------------------------------------- */
-
-const SESSION_KEY = "ark.sessionId";
-
-function makeSessionId() {
-  if (global.crypto && global.crypto.randomUUID) {
-    return global.crypto.randomUUID();
-  }
-
-  return (
-    "s-" +
-    Date.now().toString(36) +
-    Math.random().toString(36).slice(2, 10)
-  );
-}
-
-function sessionId() {
-  let id = localStorage.getItem(SESSION_KEY);
-
-  if (!id) {
-    id = makeSessionId();
-    localStorage.setItem(SESSION_KEY, id);
-  }
-
-  return id;
-}
-
-function setSessionId(id) {
-  if (!id) {
-    id = makeSessionId();
-  }
-
-  localStorage.setItem(SESSION_KEY, id);
-  state.sessionId = id;
-}
-
-function newSession() {
-  const id = makeSessionId();
-
-  setSessionId(id);
-
-  return id;
-}
+  const Storage = global.ARKStorage;
+  const API = global.API;
 
   /* ---------------------------------------------------------
      State
@@ -91,7 +28,7 @@ function newSession() {
   const state = {
     messages: [], // { id, role: 'user'|'ai', text, ts, feedback }
     busy: false,
-    sessionId: sessionId(),
+    sessionId: Storage.getSessionId(),
     stick: true, // auto-scroll only while the user is at the bottom
   };
 
@@ -106,82 +43,18 @@ function newSession() {
     }
   }
 
-  function renderMarkdown(src) {
-    const codeBlocks = [];
-    let text = String(src).replace(/\r\n/g, "\n");
+  function sessionId() {
+  return state.sessionId;
+}
 
-    // 1. Extract fenced code blocks first so their content is untouched.
-    text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-      const i = codeBlocks.push({ lang: lang || "", code }) - 1;
-      return "\u0000CODE" + i + "\u0000";
-    });
+function setSessionId(id) {
+  state.sessionId = Storage.setSessionId(id);
+}
 
-    text = escapeHtml(text);
-
-    // 2. Tables (| a | b | / |---|---| / rows)
-    text = text.replace(
-      /(^\|.+\|\n\|[ :|-]+\|\n(?:\|.*\|\n?)+)/gm,
-      (block) => {
-        const rows = block.trim().split("\n");
-        const cells = (row) =>
-          row.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
-        const head = cells(rows[0]);
-        const body = rows.slice(2).map(cells);
-        return (
-          "<table><thead><tr>" +
-          head.map((h) => "<th>" + h + "</th>").join("") +
-          "</tr></thead><tbody>" +
-          body.map((r) => "<tr>" + r.map((c) => "<td>" + c + "</td>").join("") + "</tr>").join("") +
-          "</tbody></table>"
-        );
-      }
-    );
-
-    // 3. Headings, quotes, inline styles, links
-    text = text
-      .replace(/^###\s+(.*)$/gm, "<h3>$1</h3>")
-      .replace(/^##\s+(.*)$/gm, "<h2>$1</h2>")
-      .replace(/^#\s+(.*)$/gm, "<h1>$1</h1>")
-      .replace(/^&gt;\s?(.*)$/gm, "<blockquote>$1</blockquote>")
-      .replace(/`([^`\n]+)`/g, "<code>$1</code>")
-      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-      .replace(/(^|[\s(])\*([^*\n]+)\*/g, "$1<em>$2</em>")
-      .replace(
-        /\[([^\]]+)\]\((https?:[^)\s]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-      );
-
-    // 4. Lists
-    text = text.replace(/(?:^(?:\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
-      const items = block.trim().split("\n").map((l) => l.replace(/^\d+\.\s+/, ""));
-      return "<ol>" + items.map((i) => "<li>" + i + "</li>").join("") + "</ol>";
-    });
-    text = text.replace(/(?:^[-*]\s+.*(?:\n|$))+/gm, (block) => {
-      const items = block.trim().split("\n").map((l) => l.replace(/^[-*]\s+/, ""));
-      return "<ul>" + items.map((i) => "<li>" + i + "</li>").join("") + "</ul>";
-    });
-
-    // 5. Paragraphs for remaining loose lines
-    text = text
-      .split(/\n{2,}/)
-      .map((chunk) => {
-        const t = chunk.trim();
-        if (!t) return "";
-        if (/^<(h\d|ul|ol|table|blockquote|pre)/.test(t)) return t;
-        return "<p>" + t.replace(/\n/g, "<br>") + "</p>";
-      })
-      .join("");
-
-    // 6. Restore code blocks
-    text = text.replace(/\u0000CODE(\d+)\u0000/g, (_, i) => {
-      const b = codeBlocks[Number(i)];
-      return (
-        '<pre><code data-lang="' + escapeHtml(b.lang) + '">' + escapeHtml(b.code.trim()) + "</code></pre>"
-      );
-    });
-
-    return text;
-  }
+function newSession() {
+  state.sessionId = Storage.newSession();
+  return state.sessionId;
+}
 
   /* ---------------------------------------------------------
      Rendering
@@ -224,7 +97,7 @@ function newSession() {
       '<div class="msg__body">' +
       '<p class="msg__author">' + (isAI ? "ARK AI" : "You") + "</p>" +
       '<div class="bubble bubble--' + (isAI ? "ai" : "user") + '">' +
-      (isAI ? renderMarkdown(msg.text) : escapeHtml(msg.text).replace(/\n/g, "<br>")) +
+      (isAI ? ARKMarkdown.renderMarkdown(msg.text) : escapeHtml(msg.text).replace(/\n/g, "<br>")) +
       "</div>" +
       actions +
       "</div>";
@@ -316,36 +189,12 @@ function showTyping() {
     });
   }
 
-  /* ---------------------------------------------------------
-     Backend adapter — Express API
-     --------------------------------------------------------- */
-  async function api(path, options) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), config.timeoutMs);
-    try {
-      const res = await fetch(url(path), Object.assign({ signal: controller.signal }, options));
-      if (!res.ok) throw new Error("Request failed with status " + res.status);
-      return await res.json();
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
 
 async function streamAnswer(text) {
-
-    const response = await fetch(url("/chat"), {
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            message: text,
-            sessionId: state.sessionId
-        })
-    });
+const response = await API.streamChat(
+  text,
+  state.sessionId
+);
 
     if (!response.ok) {
         throw new Error(
@@ -419,37 +268,17 @@ async function streamAnswer(text) {
 
   /** Load a stored conversation from GET /history/:sessionId. */
 async function loadHistory(id) {
-    const data = await api(
-        "/history/" + encodeURIComponent(id),
-        {
-            method: "GET"
-        }
-    );
 
+  const rows = await API.getHistory(id);
 
-    const rows =
-        Array.isArray(data)
-            ? data
-            : Array.isArray(data.data)
-                ? data.data
-                : data.messages ||
-                  data.history ||
-                  data.rows ||
-                  [];
-
-    return rows
-        .map(normalise)
-        .filter((m) => m.text);
+  return rows
+    .map(normalise)
+    .filter((m) => m.text);
 }
-async function deleteConversation(id) {
-    await api(
-        "/conversation/" + encodeURIComponent(id),
-        {
-            method: "DELETE"
-        }
-    );
 
-    return true;
+async function deleteConversation(id) {
+  await API.deleteConversation(id);
+  return true;
 }
   /** Replace the thread with a stored conversation. */
 async function openSession(id) {
@@ -487,7 +316,7 @@ async function openSession(id) {
   function appendStream(chunk) {
     if (!stream) beginStream();
     stream.msg.text += chunk;
-    stream.bubble.innerHTML = renderMarkdown(stream.msg.text);
+    stream.bubble.innerHTML = ARKMarkdown.renderMarkdown(stream.msg.text);
     scrollToEnd();
   }
 
@@ -610,8 +439,8 @@ async function respond(prompt) {
   }
 
   global.ARKChat = {
-    config, state, mount, send, respond, clear, transcript,
-    addMessage, bindMessageActions, renderMarkdown, scrollToEnd,
+     state, mount, send, respond, clear, transcript,
+    addMessage, bindMessageActions, scrollToEnd,
     sessionId, newSession, setSessionId, openSession, loadHistory,
     deleteConversation, beginStream, appendStream, endStream,
   };
