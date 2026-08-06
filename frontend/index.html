@@ -11,8 +11,9 @@
       content="ARK AI is an enterprise AI assistant with instant, accurate answers and conversation memory."
     />
 
-    <link rel="icon" href="assets/logo/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="assets/logo/ark-logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/ark-icon.png">
+
+    <link rel="apple-touch-icon" href="assets/logo/ark-icon.png">
 
     <!-- Single typeface: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,14 +50,25 @@
       <aside class="sidebar" id="sidebar" aria-label="Conversations">
         <div class="sidebar__top">
           <div class="brand">
-            <span class="brand__mark">
-              <img src="assets/logo/ark-logo.svg" alt="" width="26" height="26" />
-            </span>
-            <span class="brand__text">
-              <span class="brand__name">ARK AI</span>
-              <span class="brand__sub">Enterprise AI Assistant</span>
-            </span>
-          </div>
+
+    <img
+        class="brand__logo"
+        src="assets/logo/ark-sidebar.png"
+        alt="ARK AI Logo">
+
+    <span class="brand__text">
+
+        <span class="brand__name">
+            ARK AI
+        </span>
+
+        <span class="brand__sub">
+            Enterprise AI Assistant
+        </span>
+
+    </span>
+
+</div>
           <button
             class="btn btn--ghost btn--icon btn--sm drawer-toggle"
             id="drawerCloseBtn"
@@ -123,7 +135,10 @@
             ></button>
 
             <span class="avatar avatar--ai" aria-hidden="true">
-              <img src="assets/logo/ark-logo.svg" alt="" width="22" height="22" />
+              <img 
+              class="chat-header-logo"
+              src="assets/logo/ark-header.png"
+              alt="ARK AI" alt="" width="22" height="22" />
             </span>
             <div class="chat-header__title">
               <h1 class="chat-header__name" id="conversationTitle">New conversation</h1>

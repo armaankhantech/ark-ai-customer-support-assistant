@@ -127,3 +127,17 @@
   transition: opacity var(--dur) var(--ease), visibility var(--dur);
 }
 .scrim.is-open { opacity: 1; visibility: visible; }
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand__logo {
+    width: 64px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 10px;
+    overflow: hidden;
+}

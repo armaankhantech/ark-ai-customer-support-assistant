@@ -5,9 +5,15 @@ const errorHandler = require("./middleware/errorHandler");
 const requestLogger = require("./middleware/requestLogger");
 const rateLimiter = require("./middleware/rateLimiter");
 const app = express();
-
-app.use(cors());
-app.use(express.json());
+const helmet = require("helmet");
+app.use(helmet());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL
+    
+  })
+);
+app.use(express.json({ limit: "10kb" }));
 app.use(requestLogger);
 app.use(rateLimiter);
 app.use("/", chatRoutes);

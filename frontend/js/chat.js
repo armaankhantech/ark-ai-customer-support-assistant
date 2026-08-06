@@ -66,9 +66,19 @@ function newSession() {
     );
   }
 
-  function aiAvatar() {
-    return '<span class="avatar avatar--ai" aria-hidden="true"><img src="assets/logo/ark-logo.svg" alt="" width="22" height="22"></span>';
-  }
+function aiAvatar(){
+
+return `
+<span class="avatar avatar--ai" aria-hidden="true">
+<img
+src="assets/logo/ark-icon.png"
+alt="ARK AI"
+width="22"
+height="22">
+</span>
+`;
+
+}
 
   /** Create and append a message element; returns the element. */
   function renderMessage(msg) {
