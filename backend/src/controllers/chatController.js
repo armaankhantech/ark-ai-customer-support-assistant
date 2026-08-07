@@ -25,8 +25,8 @@ res.setHeader("Content-Type", "text/plain; charset=utf-8");
 res.setHeader("Cache-Control", "no-cache, no-transform");
 res.setHeader("Connection", "keep-alive");
 res.setHeader("X-Accel-Buffering", "no");
+res.setHeader("X-Content-Type-Options", "nosniff");
 
-// Tell proxies not to buffer the response
 res.flushHeaders();
 
         // =====================================
