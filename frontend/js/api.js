@@ -6,9 +6,9 @@
 (function (global) {
   "use strict";
 
-  const BASE_URL =
-    localStorage.getItem("ark.apiBase") ||
-    "http://localhost:3000";
+const BASE_URL =
+  localStorage.getItem("ark.apiBase") ||
+  "https://ark-ai-customer-support-assistant.onrender.com";
 
   function url(path) {
     return BASE_URL.replace(/\/$/, "") + path;
