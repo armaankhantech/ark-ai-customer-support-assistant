@@ -15,17 +15,33 @@ async function chat(req, res, next) {
         // Enable HTTP streaming
         // =====================================
 
-        res.setHeader("Content-Type", "text/plain; charset=utf-8");
-        res.setHeader("Transfer-Encoding", "chunked");
-        res.setHeader("Cache-Control", "no-cache");
-        res.setHeader("Connection", "keep-alive");
+        res.status(200);
+
+        res.setHeader(
+            "Content-Type",
+            "text/plain; charset=utf-8"
+        );
+
+        res.setHeader(
+            "Cache-Control",
+            "no-cache, no-store, must-revalidate, no-transform"
+        );
+
+        res.setHeader(
+            "X-Accel-Buffering",
+            "no"
+        );
+
+        res.setHeader(
+            "Connection",
+            "keep-alive"
+        );
 
         // Send headers immediately
         res.flushHeaders();
 
-
         // =====================================
-        // Stream response from Ollama
+        // Stream Groq response → browser
         // =====================================
 
         await ollamaService.streamChat(
@@ -34,12 +50,13 @@ async function chat(req, res, next) {
             (chunk) => {
 
                 if (!res.writableEnded) {
+
                     res.write(chunk);
+
                 }
 
             }
         );
-
 
         // =====================================
         // Finish stream
@@ -48,7 +65,6 @@ async function chat(req, res, next) {
         if (!res.writableEnded) {
             res.end();
         }
-
 
         logger.info(
             `Streaming response completed for session: ${sessionId}`
@@ -62,8 +78,6 @@ async function chat(req, res, next) {
             `Streaming chat error: ${error.message}`
         );
 
-        // If response has already started,
-        // we cannot send normal JSON anymore.
         if (res.headersSent) {
 
             if (!res.writableEnded) {
@@ -75,9 +89,7 @@ async function chat(req, res, next) {
 
         next(error);
     }
-
 }
-
 
 module.exports = {
     chat
