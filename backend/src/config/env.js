@@ -5,7 +5,7 @@ const requiredVariables = [
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
     "POSTGRES_DB",
-    "OLLAMA_URL"
+    "GROQ_API_KEY"
 ];
 const missingVariables = requiredVariables.filter(
     (variable) => !process.env[variable]
@@ -51,6 +51,9 @@ module.exports = Object.freeze({
 
     POSTGRES_DB: process.env.POSTGRES_DB,
 
-    OLLAMA_URL: process.env.OLLAMA_URL
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+
+  GROQ_MODEL:
+    process.env.GROQ_MODEL || "llama-3.3-70b-versatile"
 
 });

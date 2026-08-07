@@ -9,11 +9,11 @@ const env = require("../config/env");
 const directResponses = require("../rules");
 const logger = require("../utils/logger");
 
-const OLLAMA_URL =
-    env.OLLAMA_URL || "http://localhost:11434";
+const GROQ_URL =
+    "https://api.groq.com/openai/v1/chat/completions";
 
-const OLLAMA_MODEL =
-    env.OLLAMA_MODEL || "llama3.2:3b";
+const GROQ_MODEL =
+    env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
 
 /* ============================================================
@@ -129,97 +129,116 @@ const prompt = buildPrompt({
         });
 
 
-        /* ----------------------------------------------------
-           6. Ollama Streaming
-        ---------------------------------------------------- */
+/* ----------------------------------------------------
+   6. Groq Streaming
+---------------------------------------------------- */
 
-        const ollamaStart = Date.now();
+const groqStart = Date.now();
 
-        const response = await axios.post(
-            `${OLLAMA_URL}/api/generate`,
+const response = await axios.post(
+    GROQ_URL,
+    {
+        model: GROQ_MODEL,
+
+        messages: [
             {
-                model: OLLAMA_MODEL,
-                prompt,
-                stream: true,
-
-                keep_alive: "30m",
-
-                options: {
-                    temperature: 0.2,
-                    num_predict: 180,
-                    top_p: 0.8,
-                    top_k: 20,
-                    repeat_penalty: 1.1
-                }
-            },
-            {
-                responseType: "stream",
-                timeout: 120000
+                role: "user",
+                content: prompt
             }
-        );
+        ],
+
+        temperature: 0.2,
+
+        max_tokens: 180,
+
+        top_p: 0.8,
+
+        stream: true
+    },
+    {
+        headers: {
+            "Authorization":
+                `Bearer ${env.GROQ_API_KEY}`,
+
+            "Content-Type":
+                "application/json"
+        },
+
+        responseType: "stream",
+
+        timeout: 120000
+    }
+);
 
 
-        /* ----------------------------------------------------
-           7. Receive Ollama chunks
-        ---------------------------------------------------- */
+/* ----------------------------------------------------
+   7. Receive Groq chunks
+---------------------------------------------------- */
 
-        let fullReply = "";
-        let buffer = "";
+let fullReply = "";
+let buffer = "";
 
-        response.data.on("data", (chunk) => {
+response.data.on("data", (chunk) => {
 
-            buffer += chunk.toString();
+    buffer += chunk.toString();
 
-            const lines = buffer.split("\n");
+    const lines = buffer.split("\n");
 
-            buffer = lines.pop() || "";
+    buffer = lines.pop() || "";
 
-            for (const line of lines) {
+    for (const line of lines) {
 
-                if (!line.trim()) {
-                    continue;
-                }
+        const trimmed = line.trim();
 
-                try {
+        if (!trimmed) {
+            continue;
+        }
 
-                    const data = JSON.parse(line);
+        if (trimmed === "data: [DONE]") {
+            continue;
+        }
 
-                    if (data.response) {
+        if (!trimmed.startsWith("data:")) {
+            continue;
+        }
 
-                        fullReply += data.response;
+        try {
 
-                        if (onChunk) {
-                            onChunk(data.response);
-                        }
+            const jsonString =
+                trimmed.replace(/^data:\s*/, "");
 
-                    }
+            const data =
+                JSON.parse(jsonString);
 
-                    if (data.done) {
+            const content =
+                data.choices?.[0]?.delta?.content;
 
-                        logger.info(
-                            "Ollama streaming completed",
-                            {
-                                duration:
-                                    `${Date.now() - ollamaStart} ms`
-                            }
-                        );
+            if (content) {
 
-                    }
+                fullReply += content;
 
-                } catch (error) {
-
-                    logger.warn(
-                        "Could not parse Ollama stream chunk",
-                        {
-                            error: error.message
-                        }
-                    );
-
+                if (onChunk) {
+                    onChunk(content);
                 }
 
             }
 
-        });
+        }
+
+        catch (error) {
+
+            logger.warn(
+                "Could not parse Groq stream chunk",
+                {
+                    error: error.message
+                }
+            );
+
+        }
+
+    }
+
+});
 
 
         /* ----------------------------------------------------
