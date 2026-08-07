@@ -15,35 +15,24 @@ async function chat(req, res, next) {
         // Enable HTTP streaming
         // =====================================
 
-        res.status(200);
+// =====================================
+// Enable HTTP streaming
+// =====================================
 
-        res.setHeader(
-            "Content-Type",
-            "text/plain; charset=utf-8"
-        );
+res.status(200);
 
-        res.setHeader(
-            "Cache-Control",
-            "no-cache, no-store, must-revalidate, no-transform"
-        );
+res.setHeader("Content-Type", "text/plain; charset=utf-8");
+res.setHeader("Cache-Control", "no-cache, no-transform");
+res.setHeader("Connection", "keep-alive");
+res.setHeader("X-Accel-Buffering", "no");
 
-        res.setHeader(
-            "X-Accel-Buffering",
-            "no"
-        );
-
-        res.setHeader(
-            "Connection",
-            "keep-alive"
-        );
-
-        // Send headers immediately
-        res.flushHeaders();
+// Tell proxies not to buffer the response
+res.flushHeaders();
 
         // =====================================
         // Stream Groq response → browser
         // =====================================
-
+        res.write("");
         await ollamaService.streamChat(
             sessionId,
             message,
