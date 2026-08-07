@@ -2,7 +2,6 @@ const ollamaService = require("../services/ollamaService");
 const logger = require("../utils/logger");
 
 async function chat(req, res, next) {
-
     try {
 
         const { sessionId, message } = req.body;
@@ -12,48 +11,70 @@ async function chat(req, res, next) {
         );
 
         // =====================================
-        // Enable HTTP streaming
+        // SSE headers
         // =====================================
 
-// =====================================
-// Enable HTTP streaming
-// =====================================
+        res.status(200);
 
-res.status(200);
+        res.setHeader(
+            "Content-Type",
+            "text/event-stream; charset=utf-8"
+        );
 
-res.setHeader("Content-Type", "text/plain; charset=utf-8");
-res.setHeader("Cache-Control", "no-cache, no-transform");
-res.setHeader("Connection", "keep-alive");
-res.setHeader("X-Accel-Buffering", "no");
-res.setHeader("X-Content-Type-Options", "nosniff");
+        res.setHeader(
+            "Cache-Control",
+            "no-cache, no-transform"
+        );
 
-res.flushHeaders();
+        res.setHeader(
+            "Connection",
+            "keep-alive"
+        );
+
+        res.setHeader(
+            "X-Accel-Buffering",
+            "no"
+        );
+
+        res.flushHeaders();
+
 
         // =====================================
-        // Stream Groq response → browser
+        // Stream response
         // =====================================
-        res.write("");
+
         await ollamaService.streamChat(
             sessionId,
             message,
             (chunk) => {
 
-                if (!res.writableEnded) {
-
-                    res.write(chunk);
-
+                if (res.writableEnded) {
+                    return;
                 }
+
+                // SSE format
+                res.write(
+                    `data: ${JSON.stringify(chunk)}\n\n`
+                );
 
             }
         );
 
+
         // =====================================
-        // Finish stream
+        // End SSE stream
         // =====================================
 
         if (!res.writableEnded) {
+
+            res.write(
+                "data: [DONE]\n\n"
+            );
+
             res.end();
+
         }
+
 
         logger.info(
             `Streaming response completed for session: ${sessionId}`

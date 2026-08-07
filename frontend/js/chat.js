@@ -201,10 +201,11 @@ function showTyping() {
 
 
 async function streamAnswer(text) {
-const response = await API.streamChat(
-  text,
-  state.sessionId
-);
+
+    const response = await API.streamChat(
+        text,
+        state.sessionId
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -221,6 +222,7 @@ const response = await API.streamChat(
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
+    let buffer = "";
     let firstChunk = true;
 
     while (true) {
@@ -231,28 +233,72 @@ const response = await API.streamChat(
             break;
         }
 
-        const chunk = decoder.decode(value, {
+        buffer += decoder.decode(value, {
             stream: true
         });
 
-        if (!chunk) {
-            continue;
+        const events = buffer.split("\n\n");
+
+        buffer = events.pop() || "";
+
+        for (const event of events) {
+
+            const lines = event.split("\n");
+
+            for (const line of lines) {
+
+                if (!line.startsWith("data:")) {
+                    continue;
+                }
+
+                const data = line
+                    .slice(5)
+                    .trim();
+
+                if (!data) {
+                    continue;
+                }
+
+                if (data === "[DONE]") {
+                    continue;
+                }
+
+                let content;
+
+                try {
+                    content = JSON.parse(data);
+                }
+
+                catch (error) {
+                    console.warn(
+                        "Could not parse SSE data:",
+                        data
+                    );
+                    continue;
+                }
+
+                if (!content) {
+                    continue;
+                }
+
+                if (firstChunk) {
+
+                    hideTyping();
+
+                    beginStream();
+
+                    firstChunk = false;
+
+                }
+
+                appendStream(content);
+            }
         }
-
-        // Remove "Thinking..." when first response arrives
-        if (firstChunk) {
-
-            hideTyping();
-
-            beginStream();
-
-            firstChunk = false;
-        }
-
-        appendStream(chunk);
     }
 
-    // Backend returned no content
+    // Flush decoder
+    buffer += decoder.decode();
+
     if (firstChunk) {
 
         hideTyping();
