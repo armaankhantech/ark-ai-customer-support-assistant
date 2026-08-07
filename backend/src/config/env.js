@@ -38,22 +38,41 @@ module.exports = Object.freeze({
     RATE_LIMIT_MAX_REQUESTS:
         Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 30,
 
-    N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
+    N8N_WEBHOOK_URL:
+        process.env.N8N_WEBHOOK_URL,
 
     N8N_MEMORY_WEBHOOK_URL:
-    process.env.N8N_MEMORY_WEBHOOK_URL,
+        process.env.N8N_MEMORY_WEBHOOK_URL,
 
-    POSTGRES_HOST: process.env.POSTGRES_HOST,
+    POSTGRES_HOST:
+        process.env.POSTGRES_HOST,
 
-    POSTGRES_USER: process.env.POSTGRES_USER,
+    POSTGRES_USER:
+        process.env.POSTGRES_USER,
 
-    POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
+    POSTGRES_PASSWORD:
+        process.env.POSTGRES_PASSWORD,
 
-    POSTGRES_DB: process.env.POSTGRES_DB,
+    POSTGRES_DB:
+        process.env.POSTGRES_DB,
 
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    GROQ_API_KEY:
+        process.env.GROQ_API_KEY,
 
-  GROQ_MODEL:
-    process.env.GROQ_MODEL || "llama-3.3-70b-versatile"
+    GROQ_MODEL:
+        process.env.GROQ_MODEL ||
+        "llama-3.3-70b-versatile",
+
+    GROQ_TIMEOUT_MS:
+        Number(process.env.GROQ_TIMEOUT_MS) ||
+        120000,
+
+    N8N_TIMEOUT_MS:
+        Number(process.env.N8N_TIMEOUT_MS) ||
+        120000,
+
+    N8N_MEMORY_TIMEOUT_MS:
+        Number(process.env.N8N_MEMORY_TIMEOUT_MS) ||
+        5000
 
 });

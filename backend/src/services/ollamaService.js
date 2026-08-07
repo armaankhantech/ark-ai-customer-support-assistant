@@ -166,7 +166,7 @@ const response = await axios.post(
 
         responseType: "stream",
 
-        timeout: 120000
+        timeout: env.GROQ_TIMEOUT_MS
     }
 );
 
@@ -433,7 +433,7 @@ if (directAnswer) {
                         contextResult.documentContext
                 },
                 {
-                    timeout: 120000
+                    timeout: env.N8N_TIMEOUT_MS
                 }
             );
 

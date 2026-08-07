@@ -15,7 +15,7 @@ async function sendConversation(sessionId, message, response) {
                 response
             },
             {
-                timeout: 5000
+                timeout: env.N8N_MEMORY_TIMEOUT_MS
             }
         );
 
