@@ -1,5 +1,6 @@
 const retriever = require("../rag/retriever");
 const contextCompressor = require("./contextCompressor");
+
 class ContextRetriever {
 
     async retrieve(question) {
@@ -7,14 +8,13 @@ class ContextRetriever {
         const retrievedChunks = await retriever.retrieve(question);
 
         const rawDocumentContext = retrievedChunks
-    .map(chunk => chunk.content)
-    .join("\n\n");
+            .map(chunk => chunk.content)
+            .join("\n\n");
 
-const documentContext = contextCompressor.compress(
-    rawDocumentContext
-);
-console.log("📄 Raw Context Length:", rawDocumentContext.length);
-console.log("🗜️ Compressed Context Length:", documentContext.length);
+        const documentContext = contextCompressor.compress(
+            rawDocumentContext
+        );
+
         return {
             documentContext
         };
