@@ -58,16 +58,7 @@ const userInsert = await pool.query(
 );
 
 console.log("🔥 USER MESSAGE INSERTED:", userInsert.rows[0]);
-  const assistantInsert = await pool.query(
-    `
-    INSERT INTO messages (session_id, message, role)
-    VALUES ($1, $2, 'assistant')
-    RETURNING id, session_id, role
-    `,
-    [sessionId, fullReply]
-);
 
-console.log("🔥 ASSISTANT MESSAGE INSERTED:", assistantInsert.rows[0]);
 const verifyInsert = await pool.query(
     `
     SELECT id, session_id, role, message
@@ -292,17 +283,25 @@ response.data.on("data", (chunk) => {
            9. SAVE AI RESPONSE
         ---------------------------------------------------- */
 
-        if (fullReply.trim()) {
+/* ----------------------------------------------------
+   9. SAVE AI RESPONSE
+---------------------------------------------------- */
 
-            await pool.query(
-                `
-                INSERT INTO messages (session_id, message, role)
-                VALUES ($1, $2, 'assistant')
-                `,
-                [sessionId, fullReply]
-            );
+if (fullReply.trim()) {
+    const assistantInsert = await pool.query(
+        `
+        INSERT INTO messages (session_id, message, role)
+        VALUES ($1, $2, 'assistant')
+        RETURNING id, session_id, role
+        `,
+        [sessionId, fullReply]
+    );
 
-        }
+    console.log(
+        "🔥 ASSISTANT MESSAGE INSERTED:",
+        assistantInsert.rows[0]
+    );
+}
 
         memoryService
     .sendConversation(
