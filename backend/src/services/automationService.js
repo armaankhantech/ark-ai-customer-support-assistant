@@ -3,10 +3,8 @@ const env = require("../config/env");
 const logger = require("../utils/logger");
 
 async function sendConversation(sessionId, message, response) {
-
     try {
-
-        const result = await axios.post(
+        await axios.post(
             env.N8N_MEMORY_WEBHOOK_URL,
             {
                 session_id: sessionId,
@@ -21,11 +19,7 @@ async function sendConversation(sessionId, message, response) {
         logger.info("Memory workflow triggered");
 
     } catch (error) {
-
-        console.log("Memory Error:", error.message);
-
         logger.error(error.message);
-
     }
 }
 
