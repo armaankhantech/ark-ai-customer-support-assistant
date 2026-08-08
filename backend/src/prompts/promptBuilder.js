@@ -7,69 +7,109 @@ function buildPrompt({
     conversationMemory,
     userMessage
 }) {
-    
-  const sections = []; 
 
-  sections.push(SYSTEM_PROMPT);
+    const sections = [];
 
-  if (businessContext?.trim()) {
+    // -----------------------------------------
+    // SYSTEM INSTRUCTIONS
+    // -----------------------------------------
 
-    sections.push(`
+    sections.push(
+        SYSTEM_PROMPT.trim()
+    );
+
+
+    // -----------------------------------------
+    // BUSINESS CONTEXT
+    // -----------------------------------------
+
+    if (businessContext?.trim()) {
+
+        sections.push(`
 Business Context:
-${businessContext}
-    `.trim());
+${businessContext.trim()}
+        `.trim());
 
-}
+    }
 
-if (documentContext?.trim()) {
 
-    sections.push(`
+    // -----------------------------------------
+    // DOCUMENT / RAG CONTEXT
+    // -----------------------------------------
+
+    if (documentContext?.trim()) {
+
+        sections.push(`
 Document Context:
-${documentContext}
-    `.trim());
+${documentContext.trim()}
+        `.trim());
 
-}
+    }
 
-if (conversationMemory?.trim()) {
 
-    sections.push(`
+    // -----------------------------------------
+    // LONG-TERM MEMORY
+    // -----------------------------------------
+
+    if (conversationMemory?.trim()) {
+
+        sections.push(`
 Long-Term Memory:
-${conversationMemory}
-    `.trim());
+${conversationMemory.trim()}
+        `.trim());
 
-}
+    }
 
-if (conversationHistory?.trim()) {
+
+    // -----------------------------------------
+    // SHORT-TERM CONVERSATION HISTORY
+    // -----------------------------------------
+
+    if (conversationHistory?.trim()) {
+
+        sections.push(`
+Conversation History:
+${conversationHistory.trim()}
+        `.trim());
+
+    }
+
+
+    // -----------------------------------------
+    // CURRENT USER MESSAGE
+    // -----------------------------------------
 
     sections.push(`
-Conversation History:
-${conversationHistory}
+User:
+${userMessage.trim()}
     `.trim());
 
-}
 
-sections.push(`
-User:
-${userMessage}
-`.trim());
+    // -----------------------------------------
+    // FINAL INSTRUCTIONS
+    // -----------------------------------------
 
-return sections.join("\n\n");
-
-sections.push(`
+    sections.push(`
 Instructions:
 
-• If the user asks about ARK AI, answer ONLY from the provided context.
+• If the user asks about ARK AI, answer ONLY from the provided business context, document context, and relevant memory.
 
-• If the required company information is missing, reply exactly:
+• Do not invent company information.
+
+• If required company information is missing, reply exactly:
 "I'm sorry, but I don't have that information."
-
-• Never guess company information.
 
 • General knowledge questions may be answered normally.
 
-Assistant:
-`.trim());
+• Use Long-Term Memory only as background about the user.
 
+• Do not treat Long-Term Memory as company documentation.
+
+Assistant:
+    `.trim());
+
+
+    return sections.join("\n\n");
 }
 
 

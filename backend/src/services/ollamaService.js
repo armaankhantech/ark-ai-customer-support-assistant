@@ -88,7 +88,13 @@ async function streamChat(sessionId, userMessage, onChunk) {
     sessionId,
     userMessage
 );
-
+console.log("\n========== STREAM MEMORY DEBUG ==========");
+console.log("SESSION ID:", sessionId);
+console.log(
+    "MEMORY:",
+    contextResult.conversationMemory || "NO MEMORY FOUND"
+);
+console.log("=========================================\n");
 
         logger.info("Context Engine completed", {
             duration: `${Date.now() - contextStart} ms`

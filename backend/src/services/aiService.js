@@ -4,32 +4,55 @@
 
 const { buildContext } = require("./contextEngineService");
 const { buildPrompt } = require("../prompts/promptBuilder");
-const { SYSTEM_PROMPT } = require("../prompts/systemPrompt");
 const { generateResponse } = require("./ollamaService");
 
-async function generatePrompt(companyId, userMessage) {
+async function generatePrompt(
+    companyId,
+    sessionId,
+    userMessage
+) {
 
-    // Step 1: Retrieve context
+    // -----------------------------------------
+    // 1. Retrieve Context
+    // -----------------------------------------
+
     const contextResult = await buildContext(
         companyId,
+        sessionId,
         userMessage
     );
 
-    // Step 2: Build the final prompt
+
+    // -----------------------------------------
+    // 2. Build Prompt
+    // -----------------------------------------
+
     const prompt = buildPrompt({
 
-        systemPrompt: SYSTEM_PROMPT,
+        businessContext:
+            contextResult.businessContext,
 
-        context: contextResult.context,
+        documentContext:
+            contextResult.documentContext,
 
-        conversationHistory: "",
+        conversationMemory:
+            contextResult.conversationMemory,
+
+        conversationHistory:
+            "",
 
         userMessage
 
     });
 
-    // Step 3: Generate AI response
-    const response = await generateResponse(prompt);
+
+    // -----------------------------------------
+    // 3. Generate Response
+    // -----------------------------------------
+
+    const response =
+        await generateResponse(prompt);
+
 
     return {
 
@@ -37,16 +60,26 @@ async function generatePrompt(companyId, userMessage) {
 
         prompt,
 
-        intent: contextResult.intent,
+        intent:
+            contextResult.intent,
 
-        context: contextResult.context
+        context:
+            contextResult.context,
+
+        businessContext:
+            contextResult.businessContext,
+
+        documentContext:
+            contextResult.documentContext,
+
+        conversationMemory:
+            contextResult.conversationMemory
 
     };
 
 }
 
+
 module.exports = {
-
     generatePrompt
-
 };
