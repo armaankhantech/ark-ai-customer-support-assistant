@@ -22,6 +22,11 @@ const GROQ_MODEL =
 
 async function streamChat(sessionId, userMessage, onChunk) {
 
+    console.log("\n================ STREAM CHAT ENTERED ================");
+    console.log("SESSION ID RECEIVED:", sessionId);
+    console.log("USER MESSAGE RECEIVED:", userMessage);
+    console.log("=====================================================\n");
+
     const totalStart = Date.now();
 
     try {
@@ -43,15 +48,38 @@ async function streamChat(sessionId, userMessage, onChunk) {
            2. Save USER message immediately
         ---------------------------------------------------- */
 
-        await pool.query(
-            `
-            INSERT INTO messages (session_id, message, role)
-            VALUES ($1, $2, 'user')
-            `,
-            [sessionId, userMessage]
-        );
+const userInsert = await pool.query(
+    `
+    INSERT INTO messages (session_id, message, role)
+    VALUES ($1, $2, 'user')
+    RETURNING id, session_id, role
+    `,
+    [sessionId, userMessage]
+);
 
+console.log("🔥 USER MESSAGE INSERTED:", userInsert.rows[0]);
+  const assistantInsert = await pool.query(
+    `
+    INSERT INTO messages (session_id, message, role)
+    VALUES ($1, $2, 'assistant')
+    RETURNING id, session_id, role
+    `,
+    [sessionId, fullReply]
+);
 
+console.log("🔥 ASSISTANT MESSAGE INSERTED:", assistantInsert.rows[0]);
+const verifyInsert = await pool.query(
+    `
+    SELECT id, session_id, role, message
+    FROM messages
+    WHERE session_id = $1
+    ORDER BY id DESC
+    LIMIT 1
+    `,
+    [sessionId]
+);
+
+console.log("✅ DB VERIFICATION:", verifyInsert.rows);
         /* ----------------------------------------------------
            3. Direct Response Engine
         ---------------------------------------------------- */
