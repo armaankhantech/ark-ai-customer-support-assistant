@@ -22,10 +22,6 @@ const GROQ_MODEL =
 
 async function streamChat(sessionId, userMessage, onChunk) {
 
-    console.log("\n================ STREAM CHAT ENTERED ================");
-    console.log("SESSION ID RECEIVED:", sessionId);
-    console.log("USER MESSAGE RECEIVED:", userMessage);
-    console.log("=====================================================\n");
 
     const totalStart = Date.now();
 
@@ -48,7 +44,7 @@ async function streamChat(sessionId, userMessage, onChunk) {
            2. Save USER message immediately
         ---------------------------------------------------- */
 
-const userInsert = await pool.query(
+await pool.query(
     `
     INSERT INTO messages (session_id, message, role)
     VALUES ($1, $2, 'user')
@@ -57,20 +53,7 @@ const userInsert = await pool.query(
     [sessionId, userMessage]
 );
 
-console.log("🔥 USER MESSAGE INSERTED:", userInsert.rows[0]);
 
-const verifyInsert = await pool.query(
-    `
-    SELECT id, session_id, role, message
-    FROM messages
-    WHERE session_id = $1
-    ORDER BY id DESC
-    LIMIT 1
-    `,
-    [sessionId]
-);
-
-console.log("✅ DB VERIFICATION:", verifyInsert.rows);
         /* ----------------------------------------------------
            3. Direct Response Engine
         ---------------------------------------------------- */
@@ -107,13 +90,7 @@ console.log("✅ DB VERIFICATION:", verifyInsert.rows);
     sessionId,
     userMessage
 );
-console.log("\n========== STREAM MEMORY DEBUG ==========");
-console.log("SESSION ID:", sessionId);
-console.log(
-    "MEMORY:",
-    contextResult.conversationMemory || "NO MEMORY FOUND"
-);
-console.log("=========================================\n");
+
 
         logger.info("Context Engine completed", {
             duration: `${Date.now() - contextStart} ms`
@@ -288,7 +265,7 @@ response.data.on("data", (chunk) => {
 ---------------------------------------------------- */
 
 if (fullReply.trim()) {
-    const assistantInsert = await pool.query(
+    await pool.query(
         `
         INSERT INTO messages (session_id, message, role)
         VALUES ($1, $2, 'assistant')
@@ -297,10 +274,7 @@ if (fullReply.trim()) {
         [sessionId, fullReply]
     );
 
-    console.log(
-        "🔥 ASSISTANT MESSAGE INSERTED:",
-        assistantInsert.rows[0]
-    );
+
 }
 
         memoryService
@@ -448,10 +422,6 @@ if (directAnswer) {
          */
 
         const response =
-        console.log("===== N8N DEBUG =====");
-        console.log("Webhook URL:", env.N8N_WEBHOOK_URL);
-        console.log("Session:", sessionId);
-        console.log("Message:", userMessage);
             await axios.post(
                 env.N8N_WEBHOOK_URL,
                 {
