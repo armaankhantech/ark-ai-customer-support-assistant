@@ -58,30 +58,18 @@ async function buildContext(companyId, sessionId, message) {
     }
 
     const conversationMemory =
-    await getConversationMemory(sessionId);
+        await getConversationMemory(sessionId);
 
-    console.log("\n========== LONG TERM MEMORY ==========");
-console.log(conversationMemory || "NO MEMORY FOUND");
-console.log("=====================================\n");
-
-return {
-
-    intent,
-
-    knowledge,
-
-    businessContext,
-
-    documentContext,
-
-    conversationMemory
-
-};
+    return {
+        intent,
+        knowledge,
+        businessContext,
+        documentContext,
+        conversationMemory
+    };
 
 }
 
 module.exports = {
-
     buildContext
-
 };
