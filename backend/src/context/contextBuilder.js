@@ -9,6 +9,17 @@ const FORMATTERS = {
 
     contacts: (knowledge) => formatContacts(knowledge.contacts),
 
+    pricing: (knowledge) => `
+Pricing Information:
+ARK AI services are customized according to the customer's requirements,
+project scope, integrations, and level of automation.
+
+Pricing varies from project to project.
+
+For a personalized quote, customers can contact ARK AI at:
+${knowledge.company?.email || "the ARK AI team"}.
+`,
+
     services: (knowledge) => formatServices(knowledge.services),
 
     policies: (knowledge) => formatPolicies(knowledge.policies),

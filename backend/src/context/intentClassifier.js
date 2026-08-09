@@ -75,17 +75,24 @@ const INTENT_KEYWORDS = {
         "human representative"
     ],
 
-    services: [
-        "service",
-        "services",
-        "offer",
-        "pricing",
-        "price",
-        "automation",
-        "chatbot",
-        "consulting",
-        "package"
-    ],
+pricing: [
+    "pricing",
+    "price",
+    "cost",
+    "how much",
+    "quote",
+    "quotation"
+],
+
+services: [
+    "service",
+    "services",
+    "offer",
+    "automation",
+    "chatbot",
+    "consulting",
+    "package"
+],
 
     policies: [
         "refund",

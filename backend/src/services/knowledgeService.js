@@ -78,10 +78,16 @@ async function getKnowledgeByIntent(companyId, intent) {
                 contacts: await getContacts(companyId)
             };
 
-        case "services":
-            return {
-                services: await getServices(companyId)
-            };
+case "pricing":
+    return {
+        company: await getCompany(companyId),
+        services: await getServices(companyId)
+    };
+
+case "services":
+    return {
+        services: await getServices(companyId)
+    };
 
         case "policies":
             return {
