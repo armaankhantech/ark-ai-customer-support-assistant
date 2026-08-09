@@ -2,6 +2,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const pdf = require("pdf-parse");
 const AppError = require("../../errors/AppError");
+
 class PdfLoader {
 
     async load(filePath) {
@@ -21,18 +22,15 @@ class PdfLoader {
 
         } catch (error) {
 
-             throw new AppError(
-             "Failed to load PDF.",
-              500,
-             "PDF_LOAD_FAILED"
+            console.error("PDF Loader Error:", error);
+
+            throw new AppError(
+                "Failed to load PDF.",
+                500,
+                "PDF_LOAD_FAILED"
             );
-
         }
-
     }
-
 }
 
-module.exports = {
-    loadPdf
-};
+module.exports = new PdfLoader();

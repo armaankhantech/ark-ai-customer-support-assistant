@@ -24,9 +24,12 @@ async function ingestDocuments() {
 
         for (const chunk of chunks) {
 
+            // Generate a document-specific embedding
+            // for semantic retrieval.
             const embedding =
                 await embeddingService.generateEmbedding(
-                    chunk.content
+                    chunk.content,
+                    "RETRIEVAL_DOCUMENT"
                 );
 
             await vectorStore.storeChunk(
@@ -37,7 +40,6 @@ async function ingestDocuments() {
             console.log(
                 `Indexed Chunk ${chunk.metadata.chunkIndex}/${chunks.length}`
             );
-
         }
 
         console.log("\n============================");
@@ -46,10 +48,9 @@ async function ingestDocuments() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Document ingestion failed:", error);
 
     }
-
 }
 
 ingestDocuments();

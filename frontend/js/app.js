@@ -14,14 +14,46 @@ const API = window.API;
 const { $, $$ } = UI;
 
   /* ---------------- Static content ------------------------ */
-  const PROMPTS = [
-    { icon: "🕒", title: "Business Hours", sub: "Support availability by region" },
-    { icon: "💰", title: "Pricing", sub: "Plans, limits and add-ons" },
-    { icon: "📧", title: "Contact Support", sub: "Email, chat and phone routes" },
-    { icon: "↩️", title: "Refund Policy", sub: "Eligibility and timelines" },
-    { icon: "📚", title: "Documentation", sub: "Guides and API reference" },
-    { icon: "🧩", title: "Our Services", sub: "Learn about products and services we offer." },
-  ];
+const PROMPTS = [
+  {
+    icon: "🕒",
+    title: "Business Hours",
+    sub: "Support availability by region",
+    message: "What are ARK AI's business hours?"
+  },
+  {
+    icon: "💰",
+    title: "Pricing",
+    sub: "Plans, limits and add-ons",
+    message:
+      "How does pricing work for ARK AI services? Explain that each service has different pricing based on the customer's requirements, project scope, integrations, and level of automation. Do not invent specific prices. Also explain how a customer can contact the ARK AI team or support to discuss their requirements and get a personalized quote."
+  },
+  {
+    icon: "📧",
+    title: "Contact Support",
+    sub: "Email, chat and phone routes",
+    message: "How can I contact ARK AI support?"
+  },
+  {
+    icon: "↩️",
+    title: "Refund Policy",
+    sub: "Eligibility and timelines",
+    message: "What is ARK AI's refund policy?"
+  },
+  {
+    icon: "📚",
+    title: "Documentation",
+    sub: "Guides and API reference",
+    message:
+      "What does the ARK AI Handbook say about ARK AI, including the company, services, architecture, features, technical documentation, and how the system works? Please answer using the ARK AI Handbook and relevant documentation retrieved through the knowledge base. Do not guess or invent information."
+  },
+  {
+    icon: "🧩",
+    title: "Our Services",
+    sub: "Learn about products and services we offer.",
+    message: "What services does ARK AI offer?"
+  },
+];
 
 /* ---------------- Conversations -------------------------- */
 
@@ -248,15 +280,23 @@ async function restoreSession() {
         "</span></span></button>"
     ).join("");
 
-    els.promptGrid.addEventListener("click", async (e) => {
-      const card = e.target.closest("[data-prompt]");
-      if (!card) return;
-      if (els.title.textContent === "New conversation") {
-        els.title.textContent = card.dataset.prompt;
-      }
-      resetField();
-      await Chat.send(card.dataset.prompt);
-    });
+els.promptGrid.addEventListener("click", async (e) => {
+  const card = e.target.closest("[data-prompt]");
+  if (!card) return;
+
+  const prompt = PROMPTS.find(
+    (item) => item.title === card.dataset.prompt
+  );
+
+  const message = prompt?.message || card.dataset.prompt;
+
+  if (els.title.textContent === "New conversation") {
+    els.title.textContent = card.dataset.prompt;
+  }
+
+  await Chat.send(message);
+  resetField();
+});
   }
 
   function dismissEmptyState() {

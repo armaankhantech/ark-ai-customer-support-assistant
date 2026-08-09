@@ -5,6 +5,53 @@
 const INTENT_KEYWORDS = {
 
     // ===============================
+    // Technical / RAG Intents
+    // ===============================
+
+    handbook: [
+        "chapter",
+        "handbook",
+        "documentation",
+        "knowledge base",
+        "manual"
+    ],
+
+    rag: [
+        "rag",
+        "retrieval",
+        "retrieval augmented generation",
+        "vector",
+        "embedding",
+        "pgvector",
+        "similarity search"
+    ],
+
+    architecture: [
+        "architecture",
+        "system architecture",
+        "backend",
+        "frontend",
+        "database",
+        "design"
+    ],
+
+    context_engineering: [
+        "context engineering",
+        "context engine",
+        "context builder",
+        "context retriever",
+        "intent classifier"
+    ],
+
+    memory: [
+        "memory",
+        "conversation memory",
+        "long term memory",
+        "summary",
+        "summarization"
+    ],
+
+    // ===============================
     // Business Intents
     // ===============================
 
@@ -25,8 +72,7 @@ const INTENT_KEYWORDS = {
         "sales",
         "call",
         "whatsapp",
-        "Human Representative"
-       
+        "human representative"
     ],
 
     services: [
@@ -63,57 +109,8 @@ const INTENT_KEYWORDS = {
         "earlier",
         "before",
         "last"
-    ],
-
-    // ===============================
-    // Technical / RAG Intents
-    // ===============================
-
-    architecture: [
-        "architecture",
-        "system architecture",
-        "backend",
-        "frontend",
-        "database",
-        "design"
-    ],
-
-    rag: [
-        "rag",
-        "retrieval",
-        "retrieval augmented generation",
-        "vector",
-        "embedding",
-        "pgvector",
-        "similarity search"
-    ],
-
-    context_engineering: [
-        "context engineering",
-        "context engine",
-        "context builder",
-        "context retriever",
-        "intent classifier"
-    ],
-
-    memory: [
-        "memory",
-        "conversation memory",
-        "long term memory",
-        "summary",
-        "summarization"
-    ],
-
-    handbook: [
-        "chapter",
-        "handbook",
-        "documentation",
-        "knowledge base",
-        "manual"
     ]
-
 };
-
 
 // ===============================
 // Intent Classifier
@@ -124,26 +121,22 @@ function classifyIntent(message) {
     // Convert message to lowercase
     const normalizedMessage = message.toLowerCase();
 
-    // Loop through each intent
+    // Check higher-priority / specific intents first
     for (const [intent, keywords] of Object.entries(INTENT_KEYWORDS)) {
 
-        // Check if any keyword matches
         const hasMatch = keywords.some(keyword =>
             normalizedMessage.includes(keyword)
         );
 
-        // Return the intent immediately
+        // Return the first matching intent
         if (hasMatch) {
             return intent;
         }
-
     }
 
     // Default intent
     return "general";
-
 }
-
 
 // ===============================
 // Export

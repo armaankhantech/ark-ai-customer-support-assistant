@@ -5,7 +5,8 @@ const requiredVariables = [
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
     "POSTGRES_DB",
-    "GROQ_API_KEY"
+    "GROQ_API_KEY",
+    "GEMINI_API_KEY"
 ];
 const missingVariables = requiredVariables.filter(
     (variable) => !process.env[variable]
@@ -58,6 +59,9 @@ module.exports = Object.freeze({
 
     GROQ_API_KEY:
         process.env.GROQ_API_KEY,
+
+    GEMINI_API_KEY:
+        process.env.GEMINI_API_KEY,
 
     GROQ_MODEL:
         process.env.GROQ_MODEL ||
