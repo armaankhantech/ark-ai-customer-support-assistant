@@ -37,14 +37,9 @@ async function ingestDocuments() {
                 embedding
             );
 
-            console.log(
-                `Indexed Chunk ${chunk.metadata.chunkIndex}/${chunks.length}`
-            );
+            
         }
 
-        console.log("\n============================");
-        console.log("Document indexed successfully!");
-        console.log("============================");
 
     } catch (error) {
 

@@ -90,23 +90,6 @@ await pool.query(
     sessionId,
     userMessage
 );
- console.log("\n===== LIVE RAG CHECK =====");
-console.log("Intent:", contextResult.intent);
-console.log(
-    "RAG Context:",
-    contextResult.documentContext
-        ? "✅ PRESENT"
-        : "❌ EMPTY"
-);
-console.log(
-    "Document Context Preview:",
-    contextResult.documentContext?.slice(0, 500)
-);
-console.log("===========================\n");
-
-        logger.info("Context Engine completed", {
-            duration: `${Date.now() - contextStart} ms`
-        });
 
 
         /* ----------------------------------------------------
