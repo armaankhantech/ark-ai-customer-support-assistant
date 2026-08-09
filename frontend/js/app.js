@@ -25,8 +25,7 @@ const PROMPTS = [
     icon: "💰",
     title: "Pricing",
     sub: "Plans, limits and add-ons",
-    message:
-      "How does pricing work for ARK AI services? Explain that each service has different pricing based on the customer's requirements, project scope, integrations, and level of automation. Do not invent specific prices. Also explain how a customer can contact the ARK AI team or support to discuss their requirements and get a personalized quote."
+    message: "How does pricing work for ARK AI services? Explain that each service has different pricing based on the customer's requirements, project scope, integrations, and level of automation. Do not invent specific prices. Also explain how a customer can contact the ARK AI team or support to discuss their requirements and get a personalized quote."
   },
   {
     icon: "📧",
@@ -44,8 +43,7 @@ const PROMPTS = [
     icon: "📚",
     title: "Documentation",
     sub: "Guides and API reference",
-    message:
-      "What does the ARK AI Handbook say about ARK AI, including the company, services, architecture, features, technical documentation, and how the system works? Please answer using the ARK AI Handbook and relevant documentation retrieved through the knowledge base. Do not guess or invent information."
+    message: "What does the ARK AI Handbook say about ARK AI?"
   },
   {
     icon: "🧩",
