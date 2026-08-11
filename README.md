@@ -69,7 +69,7 @@ Built end-to-end as a **production-oriented portfolio project** using modern AI,
 
 ## Video Demo
 
-<https://github.com/user-attachments/assets/6e1b5089-67d0-44ba-b695-e0263103347e>
+<https://github.com/user-attachments/assets/16ce7011-544c-42cd-83fe-21efcc470d1a>
 
 ---
 
