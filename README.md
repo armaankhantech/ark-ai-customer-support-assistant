@@ -138,57 +138,99 @@ Because these services are free-tier or self-hosted, **availability, quotas, lat
 
 ---
 
-# 🧠 3. Groq + Llama 3.3 70B Limits
+# 🧠 3. OpenAI GPT-OSS-120B Model
+
 
 ARK AI currently uses:
 
-```text
 Model:
-llama-3.3-70b-versatile
-```
+gpt-oss-120b
 
-through Groq.
+The model is an open-weight reasoning model released by OpenAI and is used by ARK AI as the primary production AI model.
 
-The model currently has:
+Model Specifications
+117B total parameters
+5.1B active parameters per token
+128 total experts
+4 experts active per token
+128K-token context window
+36 transformer layers
+Mixture-of-Experts (MoE) architecture
+Low / Medium / High reasoning levels
+Supports tool use and agentic workflows
+Apache 2.0 license
 
-* **131,072-token context window**
-* **32,768 maximum output tokens**
-* Approximately **280 tokens/second** listed token speed
-* Paid pricing also exists, but ARK AI's public demo is designed around free-tier usage.
+OpenAI lists the context length as approximately 128K tokens for GPT-OSS-120B.
 
-### Current Free Plan Rate Limits
+Important: API & Rate Limits
 
-For `llama-3.3-70b-versatile`, Groq currently lists:
+Unlike models accessed through the OpenAI API, gpt-oss-120b is an open-weight model.
 
-| Limit             |       Free Tier |
-| ----------------- | --------------: |
-| Requests / Minute |      **30 RPM** |
-| Requests / Day    |   **1,000 RPD** |
-| Tokens / Minute   |  **12,000 TPM** |
-| Tokens / Day      | **100,000 TPD** |
+It is not served through the OpenAI API, meaning:
 
-These limits are subject to change and are controlled by Groq.
+OpenAI API pricing does not apply
+OpenAI API rate limits do not apply
+Inference depends on the infrastructure/provider running the model
+Hosting-provider limits may still apply
 
-### What can happen?
+This distinction is important for ARK AI's production deployment.
 
-If the public demo receives unusually high traffic, the AI request may fail because the project's Groq quota can be exhausted.
+Current ARK AI Configuration
+Primary Production Model
+        ↓
+gpt-oss-120b
+        ↓
+AI Customer Support
+        ↓
+RAG + Context Engine
+        ↓
+PostgreSQL + pgvector
+        ↓
+Response
+
+ARK AI also uses a separate lightweight local model for its
+long-term-memory workflow:
+
+Conversation
+      ↓
+n8n
+      ↓
+Llama 3.2 3B
+      ↓
+Memory Extraction
+      ↓
+PostgreSQL
+What can happen?
+
+If the infrastructure hosting gpt-oss-120b experiences:
+
+High traffic
+Provider quota exhaustion
+GPU capacity limitations
+Network failures
+Provider downtime
+
+the AI request may fail or become slower.
 
 Possible symptoms include:
 
-```text
 AI response unavailable
-Rate limit error
 Temporary request failure
-Slow / failed response
-```
+Timeout
+Slow response
+Provider rate-limit error
 
-This does **not necessarily mean the ARK AI backend is broken**.
+This does not necessarily mean the ARK AI backend is broken.
 
-It may simply mean the external AI service has reached its current quota.
+The issue may originate from the infrastructure serving the model.
 
-Check the official Groq limits before troubleshooting:
+For model specifications and deployment information, see the official OpenAI and Hugging Face model documentation.
 
-https://console.groq.com/docs/rate-limits
+OpenAI Model Information:
+https://openai.com/index/introducing-gpt-oss/
+
+Hugging Face Model:
+https://huggingface.co/openai/gpt-oss-120b
 
 ---
 
