@@ -64,8 +64,8 @@ module.exports = Object.freeze({
         process.env.GEMINI_API_KEY,
 
     GROQ_MODEL:
-        process.env.GROQ_MODEL ||
-        "llama-3.3-70b-versatile",
+        process.env.GROQ_MODEL || "openai/gpt-oss-120b",
+
 
     GROQ_TIMEOUT_MS:
         Number(process.env.GROQ_TIMEOUT_MS) ||

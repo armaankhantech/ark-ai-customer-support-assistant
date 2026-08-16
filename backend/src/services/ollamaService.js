@@ -13,9 +13,9 @@ const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
 const GROQ_MODEL =
-    env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    env.GROQ_MODEL || "openai/gpt-oss-120b";
 
-
+console.log("🤖 GROQ MODEL:", GROQ_MODEL);
 /* ============================================================
    STREAMING CHAT
    ============================================================ */
