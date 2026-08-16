@@ -138,98 +138,154 @@ Because these services are free-tier or self-hosted, **availability, quotas, lat
 
 ---
 
-# 🧠 3. OpenAI GPT-OSS-120B Model
-
+# 🧠 3. GPT-OSS-120B Model
 
 ARK AI currently uses:
 
+```text
 Model:
 gpt-oss-120b
 
-The model is an open-weight reasoning model released by OpenAI and is used by ARK AI as the primary production AI model.
+```
+as its primary production AI model.
+
+GPT-OSS-120B is an open-weight reasoning model released by OpenAI and designed for advanced reasoning, agentic workflows, tool use, and production AI applications.
 
 Model Specifications
-117B total parameters
-5.1B active parameters per token
-128 total experts
-4 experts active per token
-128K-token context window
-36 transformer layers
-Mixture-of-Experts (MoE) architecture
-Low / Medium / High reasoning levels
-Supports tool use and agentic workflows
-Apache 2.0 license
+Specification	GPT-OSS-120B
+Total Parameters	117B
+Active Parameters / Token	5.1B
+Architecture	Mixture-of-Experts (MoE)
+Number of Experts	128
+Active Experts / Token	4
+Context Window	128K tokens
+Transformer Layers	36
+Reasoning Levels	Low / Medium / High
+License	Apache 2.0
+Key Capabilities
 
-OpenAI lists the context length as approximately 128K tokens for GPT-OSS-120B.
+GPT-OSS-120B supports:
 
-Important: API & Rate Limits
+Advanced reasoning
+Tool calling
+Agentic workflows
+Structured outputs
+Long-context interactions
+Multi-step problem solving
+Production AI applications
 
-Unlike models accessed through the OpenAI API, gpt-oss-120b is an open-weight model.
+ARK AI uses GPT-OSS-120B as the primary model responsible for generating customer-support responses.
 
-It is not served through the OpenAI API, meaning:
+⚙️ ARK AI Model Architecture
 
-OpenAI API pricing does not apply
-OpenAI API rate limits do not apply
-Inference depends on the infrastructure/provider running the model
-Hosting-provider limits may still apply
+The primary AI response pipeline is:
 
-This distinction is important for ARK AI's production deployment.
+                    USER
+                      │
+                      ▼
+                ARK AI FRONTEND
+                      │
+                      ▼
+              NODE.JS + EXPRESS
+                      │
+                      ▼
+               CONTEXT ENGINE
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       INTENT        RAG       MEMORY
+       ENGINE       ENGINE      ENGINE
+          │           │           │
+          ▼           ▼           ▼
+     CONTEXT      pgvector    PostgreSQL
+     RETRIEVAL    DATABASE    MEMORY
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+                GPT-OSS-120B
+               PRIMARY MODEL
+                      │
+                      ▼
+                 AI RESPONSE
+                      │
+                      ▼
+                ARK AI FRONTEND
+🧠 Long-Term Memory Model
 
-Current ARK AI Configuration
-Primary Production Model
-        ↓
-gpt-oss-120b
-        ↓
-AI Customer Support
-        ↓
-RAG + Context Engine
-        ↓
-PostgreSQL + pgvector
-        ↓
-Response
+ARK AI uses a separate lightweight local model for its long-term-memory workflow.
 
-ARK AI also uses a separate lightweight local model for its
-long-term-memory workflow:
+             CONVERSATION
+                   │
+                   ▼
+                  n8n
+                   │
+                   ▼
+             Llama 3.2 3B
+                   │
+                   ▼
+          MEMORY EXTRACTION
+                   │
+                   ▼
+              PostgreSQL
+                   │
+                   ▼
+        FUTURE CONVERSATIONS
 
-Conversation
-      ↓
-n8n
-      ↓
-Llama 3.2 3B
-      ↓
-Memory Extraction
-      ↓
-PostgreSQL
-What can happen?
+This separation allows the primary production model and the memory-processing model to perform different responsibilities.
 
-If the infrastructure hosting gpt-oss-120b experiences:
+Model Responsibilities
+Model	Responsibility
+GPT-OSS-120B	Primary AI customer-support responses
+Llama 3.2 3B	Long-term user-memory extraction
+🚦 Rate Limits & Availability
 
-High traffic
-Provider quota exhaustion
+GPT-OSS-120B is an open-weight model rather than a model served through the OpenAI API.
+
+Therefore, there is no single universal OpenAI API rate limit such as:
+
+Requests / Minute
+Requests / Day
+Tokens / Minute
+Tokens / Day
+
+The actual request limits, GPU availability, throughput, and quotas depend on the infrastructure or inference provider used to serve the model.
+
+Possible production issues may include:
+
+Provider rate limits
 GPU capacity limitations
+High traffic
 Network failures
-Provider downtime
+Inference provider downtime
+Request timeouts
+Temporary model unavailability
 
-the AI request may fail or become slower.
+These issues do not necessarily indicate a problem with the ARK AI backend.
 
-Possible symptoms include:
+⚠️ Production Considerations
 
-AI response unavailable
-Temporary request failure
-Timeout
-Slow response
-Provider rate-limit error
+Because GPT-OSS-120B is a large Mixture-of-Experts model, production performance depends heavily on the infrastructure serving it.
 
-This does not necessarily mean the ARK AI backend is broken.
+Important factors include:
 
-The issue may originate from the infrastructure serving the model.
+GPU availability
+Provider capacity
+Network latency
+Context size
+Concurrent requests
+Inference configuration
+Provider-specific rate limits
 
-For model specifications and deployment information, see the official OpenAI and Hugging Face model documentation.
+ARK AI therefore treats the model as one component of a larger production architecture rather than relying on the model alone.
 
-OpenAI Model Information:
+📚 Official Resources
+
+OpenAI GPT-OSS announcement:
+
 https://openai.com/index/introducing-gpt-oss/
 
-Hugging Face Model:
+GPT-OSS-120B model:
+
 https://huggingface.co/openai/gpt-oss-120b
 
 ---
