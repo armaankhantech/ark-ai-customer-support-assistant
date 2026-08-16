@@ -130,7 +130,7 @@ Current infrastructure includes:
 | 🗄️ Database     | PostgreSQL / Supabase   | Conversations, knowledge & application data |
 | 🔎 Vector Search | pgvector                | Semantic retrieval / RAG                    |
 | 🔄 Automation    | Self-hosted n8n         | Workflow orchestration                      |
-| 🧠 LLM           | Llama 3.3 70B via Groq  | AI generation                               |
+| 🧠 LLM           | GPT-OSS-120B via Groq  | AI generation                               |
 | 🚀 Deployment    | Render Free             | Public backend deployment                   |
 | 🧠 AI API        | Groq                    | LLM inference                               |
 
