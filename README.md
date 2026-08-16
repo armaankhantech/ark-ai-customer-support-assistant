@@ -1,172 +1,758 @@
-# ARK AI Customer Support Assistant
- 
-An AI-powered customer support chat system: a browser chat widget talks to an Express backend, which triggers an n8n workflow that retrieves conversation history, grounds responses in real business data, runs a local LLM (Ollama / Qwen3 8B), and logs everything to PostgreSQL.
- 
-**Status: v1 — working end-to-end pipeline with conversation memory, business knowledge grounding, and a premium streaming chat UI. Active development.**
- 
-The assistant remembers prior messages within a session, answers business-specific questions (hours, services, refund policy) from a trusted data source instead of guessing, and responds with "I don't have that information" when asked something outside that data. Category classification is currently non-functional (hardcoded) — see Known Issues.
- 
----
- 
-## ✨ Features
- 
-- 💬 Real-time AI chat interface with streaming responses
-- 🧠 Persistent conversation memory
-- 🆔 Session-based chat history
-- 🗄️ PostgreSQL message storage
-- 🔄 Conversation retrieval & prompt construction
-- 🏢 Business knowledge grounding (`companyInfo.js` as single source of truth)
-- 🛡️ Hallucination fallback for out-of-scope questions
-- 📏 Rolling 20-message context window
-- 🤖 Ollama (Qwen3:8B) integration
-- ⚡ n8n workflow automation
-- 📜 Ordered chat history
-- 👥 Multiple independent chat sessions
-- 📊 Support ticket logging
-Instead of simply sending messages to an AI model, the project focuses on building a **production-style chatbot**, including AI workflow automation, long-term memory, session management, a real backend API, and a polished, responsive frontend.
- 
----
- 
-## 🎨 Premium UI
- 
-Inspired by modern AI applications like ChatGPT, Claude, and Gemini.
- 
-- Premium purple UI with glassmorphism
-- Responsive layout
-- Streaming (typewriter) AI responses
-- Markdown rendering
-- Syntax highlighted code blocks
-- Copy code button
-- Auto-resizing textarea
-- Typing indicator
-- Auto-scroll
-- Session persistence using Local Storage
+# 🤖 ARK AI — AI Customer Support Assistant
+
+> **ARK AI V1.0 — Public Release 🚀**
+
+An AI-powered customer support assistant designed to answer business-specific questions using **company knowledge, RAG, conversation memory, long-term memory, context engineering, and streaming AI responses**.
+
+Built end-to-end as a **production-oriented portfolio project** using modern AI, backend, database, and automation technologies.
+
+<p align="center">
+
+  <a href="https://ark-ai-customer-support-assistant-1.onrender.com/">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Try%20ARK%20AI-6C63FF?style=for-the-badge" alt="Live Demo">
+  </a>
+
+  <a href="https://github.com/armaankhantech/ark-ai-customer-support-assistant/releases/tag/v1.0.0">
+    <img src="https://img.shields.io/badge/Version-v1.0.0-00C853?style=for-the-badge" alt="Version">
+  </a>
+
+  <img src="https://img.shields.io/badge/Status-Public%20Release-2196F3?style=for-the-badge" alt="Status">
+
+</p>
+
+<p align="center">
+
+  <img src="https://img.shields.io/badge/Node.js-Backend-339933?logo=node.js&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/Express.js-API-000000?logo=express&logoColor=white" alt="Express">
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/n8n-Automation-EA4B71?logo=n8n&logoColor=white" alt="n8n">
+  <img src="https://img.shields.io/badge/Groq-Llama%203.3%2070B-F55036?logo=meta&logoColor=white" alt="Groq">
+
+</p>
 
 ---
 
-## ⚙ Backend Features
+# 📸 SCREENSHOTS
 
-- Layered Express.js architecture
-- REST API
-- Environment variables
-- Centralized configuration
-- Logger utility
-- Error handling middleware
-- Service layer
-- Controller layer
-- Route layer
-- PostgreSQL integration
-- n8n webhook integration
-- Rule-Based Intent Classifier
-- Intent-Specific Knowledge Retrieval
-- Modular Context Builder
-- Formatter Registry Pattern
-- Production-Ready Architecture
-- Reduced Prompt Size
-- Future-Ready Design for RAG Integration
+## 💬 Main Chat Interface
+
+
+<p align="center">
+ <img width="1919" height="909" alt="Image" src="https://github.com/user-attachments/assets/d33cef03-8222-43c1-84a2-b9c0faa45293" />
+</p>
 
 ---
 
-## 🚀 ARK AI Customer Support Assistant — Performance Benchmark :
-| Metric | Before (Day 26) | After (Day 27) | Improvement |
-| --- | --- | --- | --- |
-| **LLM Model** | Qwen3:4B | Llama 3.2:3B | ✅ Better fit for hardware |
-| **Prompt Size** | ~2157 characters | ~989 characters | **↓ 54%** |
-| **Context Strategy** | Entire Business Knowledge | Intent-Based Context Retrieval | ✅ Optimized |
-| **Knowledge Retrieval** | Load all tables | Load only relevant table | ✅ Efficient |
-| **Average Response Time** | ~31 seconds | **2.37 seconds** | **🚀 ~13× Faster** |
-| **Response Quality** | Reasoning leaked into output, inconsistent | Direct, concise, accurate | ✅ Improved |
-| **Architecture** | Static Knowledge Loading | Modular Context Engine | ✅ Production-ready |
-| **Scalability** | Difficult to extend | Ready for RAG & new data sources | ✅ Future-proof |
+## 🤖 AI Customer Support Response
 
-## ✨ What's New
-Added a scalable PostgreSQL knowledge schema:
--Company
--Services
--FAQs
--Policies
--Contacts
-
-- Created knowledgeService.js to load business knowledge dynamically
--Refactored the n8n workflow into modular stages:
--Prepare Knowledge
--Prepare Conversation
--Build Prompt
--HTTP Request
--Built a dynamic prompt builder that injects live business information from the database.
--Eliminated hardcoded company data from the AI pipeline.
+<p align="center">
+  <img width="1919" height="918" alt="Image" src="https://github.com/user-attachments/assets/f1d00b7a-f4cf-456a-b048-628c056ac342" />
+</p>
 
 ---
 
-# 🏗 Architecture
+## 📚 RAG / Knowledge Retrieval
 
-```
-Frontend (HTML/CSS/JavaScript)
-            │
-            ▼
-Express REST API
-            │
-            ▼
-Routes
-            │
-            ▼
-Controller
-            │
-            ▼
-Service Layer
-            │
-            ▼
-n8n Workflow
-            │
-    ┌───────┼──────────────────────┐
-    │       │                      │
-    ▼       ▼                      ▼
-PostgreSQL  Prompt Builder    Ollama (Qwen3 8B)
-    │                              │
-    └──────────────┬───────────────┘
-                   ▼
-          AI Response Returned
-                   │
-                   ▼
-              Frontend UI
+<p align="center">
+  <img width="1917" height="980" alt="Image" src="https://github.com/user-attachments/assets/52c711ac-6800-4607-bce0-a02591c320c8" />
+</p>
+
+---
+
+## 🧠 Conversation Memory
+
+<p align="center">
+  <img width="1920" height="1006" alt="Image" src="https://github.com/user-attachments/assets/6923daad-ceeb-4add-815e-bb7c5a7ba933" />
+</p>
+
+---
+
+## Video Demo
+
+<https://github.com/user-attachments/assets/16ce7011-544c-42cd-83fe-21efcc470d1a>
+
+---
+
+
+# ⚠️ READ THIS BEFORE USING THE LIVE DEMO
+
+> **ARK AI V1.0 is a portfolio and demonstration project.**
+>
+> It is intentionally deployed using **free-tier and self-hosted infrastructure**. The application is designed to demonstrate AI engineering, automation, backend architecture, RAG, memory, and deployment  **not to provide production-grade service guarantees**.
+
+## 💤 1. Render Free-Tier Cold Start
+
+The public backend is deployed using **Render's Free Web Service**.
+
+Render automatically spins down a Free Web Service after **15 minutes without inbound traffic**.
+
+When someone opens ARK AI after the service has been inactive, the first request wakes the service back up. Render states that this startup normally takes **about one minute**.
+
+Therefore:
+
+```text
+User opens ARK AI
+       ↓
+Server may be sleeping
+       ↓
+First request wakes server
+       ↓
+~ startup delay
+       ↓
+ARK AI becomes available
+       ↓
+Normal usage
 ```
 
+### What this means
+
+If the website appears to take a while to load initially, **this is expected behavior of the Render Free tier and does not necessarily indicate an application failure.**
+
+Once the service is running, subsequent requests should not experience that initial cold-start delay.
+
+Render also notes that Free Web Services have a **750-hour monthly included runtime allowance**, plus other free-tier restrictions.
+
+**Official documentation:**
+https://render.com/docs/free
+
 ---
 
-# 📂 Project Structure
+# 🆓 2. Free Infrastructure
 
+ARK AI V1.0 intentionally uses free or self-hosted infrastructure wherever practical.
+
+Current infrastructure includes:
+
+| Component        | Infrastructure          | Purpose                                     |
+| ---------------- | ----------------------- | ------------------------------------------- |
+| 🌐 Frontend      | HTML / CSS / JavaScript | Chat interface                              |
+| ⚙️ Backend       | Node.js + Express.js    | API and application logic                   |
+| 🗄️ Database     | PostgreSQL / Supabase   | Conversations, knowledge & application data |
+| 🔎 Vector Search | pgvector                | Semantic retrieval / RAG                    |
+| 🔄 Automation    | Self-hosted n8n         | Workflow orchestration                      |
+| 🧠 LLM           | Llama 3.3 70B via Groq  | AI generation                               |
+| 🚀 Deployment    | Render Free             | Public backend deployment                   |
+| 🧠 AI API        | Groq                    | LLM inference                               |
+
+Because these services are free-tier or self-hosted, **availability, quotas, latency, storage, and throughput are limited.**
+
+---
+
+# 🧠 3. Groq + Llama 3.3 70B Limits
+
+ARK AI currently uses:
+
+```text
+Model:
+llama-3.3-70b-versatile
 ```
+
+through Groq.
+
+The model currently has:
+
+* **131,072-token context window**
+* **32,768 maximum output tokens**
+* Approximately **280 tokens/second** listed token speed
+* Paid pricing also exists, but ARK AI's public demo is designed around free-tier usage.
+
+### Current Free Plan Rate Limits
+
+For `llama-3.3-70b-versatile`, Groq currently lists:
+
+| Limit             |       Free Tier |
+| ----------------- | --------------: |
+| Requests / Minute |      **30 RPM** |
+| Requests / Day    |   **1,000 RPD** |
+| Tokens / Minute   |  **12,000 TPM** |
+| Tokens / Day      | **100,000 TPD** |
+
+These limits are subject to change and are controlled by Groq.
+
+### What can happen?
+
+If the public demo receives unusually high traffic, the AI request may fail because the project's Groq quota can be exhausted.
+
+Possible symptoms include:
+
+```text
+AI response unavailable
+Rate limit error
+Temporary request failure
+Slow / failed response
+```
+
+This does **not necessarily mean the ARK AI backend is broken**.
+
+It may simply mean the external AI service has reached its current quota.
+
+Check the official Groq limits before troubleshooting:
+
+https://console.groq.com/docs/rate-limits
+
+---
+
+# 🗄️ 4. Supabase Free Tier
+
+ARK AI uses PostgreSQL infrastructure through Supabase for persistent application data.
+
+The current Supabase Free Plan includes:
+
+| Resource                  |           Free Plan |
+| ------------------------- | ------------------: |
+| PostgreSQL Database       |          **500 MB** |
+| Egress                    |            **5 GB** |
+| File Storage              |            **1 GB** |
+| Cached Egress             |            **5 GB** |
+| Monthly Active Users      |          **50,000** |
+| Realtime Messages         | **2 million/month** |
+| Peak Realtime Connections |             **200** |
+
+Supabase also states that Free projects can be paused after **one week of inactivity**.
+
+For ARK AI V1.0, these limits are more than sufficient for demonstration purposes, but they are **not intended to support unrestricted production traffic**.
+
+Official documentation:
+
+https://supabase.com/docs
+
+---
+
+# 🔄 5. Self-Hosted n8n
+
+ARK AI uses **self-hosted n8n** for workflow orchestration.
+
+Because the n8n instance is self-hosted, its practical limits depend on the machine/server running it.
+
+Factors include:
+
+* CPU
+* RAM
+* Storage
+* Docker configuration
+* Concurrent executions
+* Workflow complexity
+* Database performance
+* Network availability
+
+Therefore, the public ARK AI demo should not be treated as an unlimited automation platform.
+
+---
+
+# 🔐 6. PLEASE DON'T SUBMIT SENSITIVE INFORMATION
+
+ARK AI V1.0 is a public portfolio demonstration.
+
+**Do not enter:**
+
+* Passwords
+* API keys
+* Authentication tokens
+* Payment information
+* Credit/debit card details
+* Confidential company information
+* Private customer information
+* Sensitive personal information
+
+Use fictional or non-sensitive information when testing the chatbot.
+
+---
+
+# 🚀 LIVE DEMO
+
+## 👉 Try ARK AI
+
+**https://ark-ai-customer-support-assistant-1.onrender.com/**
+
+### Recommended testing sequence
+
+Try:
+
+```text
+1. Open ARK AI
+        ↓
+2. Wait for the server to wake if necessary
+        ↓
+3. Ask a company-specific question
+        ↓
+4. Ask a follow-up question
+        ↓
+5. Test conversation memory
+        ↓
+6. Test a knowledge/document question
+        ↓
+7. Test an unknown question
+        ↓
+8. Try the interface on mobile
+```
+
+### Example conversation
+
+**User:**
+
+> What are your business hours?
+
+**ARK AI:**
+
+> Provides the business hours from its available knowledge.
+
+Then ask:
+
+> Are they the same on weekends?
+
+The second question tests whether ARK AI can use the **previous conversation context** instead of treating every message as an isolated request.
+
+---
+
+# 🎯 WHAT PROBLEM DOES ARK AI SOLVE?
+
+Businesses often have information distributed across:
+
+```text
+FAQs
+Documents
+Policies
+Databases
+Business information
+Previous conversations
+Support knowledge
+```
+
+Traditional support systems often require customers to manually search through this information.
+
+ARK AI provides a conversational interface:
+
+```text
+Customer
+   │
+   │ "What is your refund policy?"
+   ▼
+┌─────────────────────┐
+│       ARK AI        │
+└─────────────────────┘
+   │
+   ├── Conversation Memory
+   ├── Business Knowledge
+   ├── RAG Retrieval
+   ├── Context Engineering
+   └── AI Reasoning
+   │
+   ▼
+Context-aware response
+```
+
+The goal is not simply:
+
+> **"Send a question to an LLM."**
+
+The goal is:
+
+> **"Build a complete system around an LLM."**
+
+---
+
+# ✨ KEY FEATURES
+
+### 💬 AI Customer Support
+
+Answers customer questions through a conversational interface.
+
+### 🧠 Conversation Memory
+
+Maintains relevant previous messages so conversations remain contextual.
+
+### 🗃️ Long-Term Memory
+
+Important conversation information can be summarized and persisted for future contextual use.
+
+### 📚 RAG
+
+Retrieves relevant information from the knowledge base before generating an answer.
+
+### 🔎 PostgreSQL + pgvector
+
+Stores structured information and supports vector-based semantic retrieval.
+
+### 🔄 n8n Automation
+
+Uses workflow automation to orchestrate parts of the AI pipeline.
+
+### 🧩 Context Engine
+
+Selects and prepares relevant information before sending it to the LLM.
+
+### 📝 Prompt Engineering
+
+Uses structured system instructions and dynamically assembled context.
+
+### ⚡ Streaming Responses
+
+AI responses can be displayed progressively rather than waiting for the entire response.
+
+### 🆔 Session-Based Conversations
+
+Individual conversations are separated using session identifiers.
+
+### 📱 Responsive UI
+
+Designed for desktop, tablet, and mobile experiences.
+
+---
+
+# 🏗️ SYSTEM ARCHITECTURE
+
+```text
+                         👤 CUSTOMER
+                             │
+                             ▼
+                 ┌──────────────────────┐
+                 │    ARK AI FRONTEND   │
+                 │ HTML / CSS / JS      │
+                 └──────────┬───────────┘
+                            │
+                            │ HTTP
+                            ▼
+                 ┌──────────────────────┐
+                 │    EXPRESS.JS API    │
+                 │      BACKEND         │
+                 └──────────┬───────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │   CONTEXT ENGINE     │
+                 └──────────┬───────────┘
+                            │
+              ┌─────────────┼──────────────┐
+              │             │              │
+              ▼             ▼              ▼
+        🧠 Memory       📚 RAG        🗄️ Knowledge
+              │             │              │
+              └─────────────┼──────────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │    PROMPT BUILDER    │
+                 │ Dynamic Context      │
+                 └──────────┬───────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │      n8n FLOW        │
+                 │ Workflow Automation  │
+                 └──────────┬───────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │    GROQ API          │
+                 │ Llama 3.3 70B        │
+                 └──────────┬───────────┘
+                            │
+                            │ Streaming
+                            ▼
+                 ┌──────────────────────┐
+                 │     EXPRESS API      │
+                 └──────────┬───────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │    ARK AI CHAT UI    │
+                 └──────────────────────┘
+```
+
+---
+
+# 🔄 COMPLETE REQUEST FLOW
+
+When a customer sends a message:
+
+```text
+1️⃣ Customer sends message
+
+        ↓
+
+2️⃣ Frontend sends request
+
+        ↓
+
+3️⃣ Express receives request
+
+        ↓
+
+4️⃣ Session is identified
+
+        ↓
+
+5️⃣ Conversation history is retrieved
+
+        ↓
+
+6️⃣ Relevant knowledge is retrieved
+
+        ↓
+
+7️⃣ RAG searches relevant information
+
+        ↓
+
+8️⃣ Context Engine prepares relevant context
+
+        ↓
+
+9️⃣ Prompt Builder creates the AI prompt
+
+        ↓
+
+🔟 n8n orchestrates the workflow
+
+        ↓
+
+1️⃣1️⃣ Groq processes the request
+
+        ↓
+
+1️⃣2️⃣ Llama 3.3 70B generates response
+
+        ↓
+
+1️⃣3️⃣ Response streams through backend
+
+        ↓
+
+1️⃣4️⃣ Frontend displays response
+
+        ↓
+
+1️⃣5️⃣ Conversation is persisted
+```
+
+---
+
+# 🧠 HOW MEMORY WORKS
+
+ARK AI separates memory into multiple layers.
+
+```text
+                    CONVERSATION
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ Recent Messages │
+                └────────┬────────┘
+                         │
+                         ▼
+                 Short-Term Memory
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ Summarization   │
+                │ / Long-Term     │
+                │ Memory Pipeline │
+                └────────┬────────┘
+                         │
+                         ▼
+                    PostgreSQL
+```
+
+### Short-Term Memory
+
+Keeps relevant recent conversation messages available for the current interaction.
+
+### Long-Term Memory
+
+Important information can be summarized and persisted instead of continuously sending the entire conversation to the model.
+
+This reduces unnecessary context and helps keep the system more efficient.
+
+---
+
+# 📚 HOW RAG WORKS
+
+RAG stands for:
+
+> **Retrieval-Augmented Generation**
+
+Instead of asking the LLM to answer everything from its internal knowledge:
+
+```text
+User Question
+      ↓
+Retrieve relevant information
+      ↓
+Add relevant context
+      ↓
+Send context + question to LLM
+      ↓
+Generate grounded answer
+```
+
+For ARK AI:
+
+```text
+Customer Question
+       ↓
+Semantic Retrieval
+       ↓
+Relevant Knowledge
+       ↓
+Context Engine
+       ↓
+Prompt
+       ↓
+Llama 3.3 70B
+       ↓
+Grounded Response
+```
+
+This architecture helps reduce the risk of the model inventing business-specific information.
+
+---
+
+# 🧩 CONTEXT ENGINEERING
+
+One of the biggest lessons from building ARK AI was:
+
+> **More context does not automatically mean better AI.**
+
+Instead of blindly sending everything to the model:
+
+```text
+Entire Database
++
+Entire Conversation
++
+Every FAQ
++
+Every Document
++
+Every Instruction
+```
+
+ARK AI attempts to select relevant information:
+
+```text
+User Question
+      │
+      ▼
+What information is actually needed?
+      │
+      ├── Conversation Context
+      ├── Business Knowledge
+      ├── Retrieved Documents
+      └── System Instructions
+              │
+              ▼
+        Relevant Context
+              │
+              ▼
+             LLM
+```
+
+This improves maintainability and can reduce unnecessary prompt processing.
+
+---
+
+# ⚡ STREAMING
+
+Instead of:
+
+```text
+User
+ ↓
+Wait...
+ ↓
+Wait...
+ ↓
+Complete response
+ ↓
+Display everything
+```
+
+ARK AI can stream the response:
+
+```text
+User
+ ↓
+AI starts generating
+ ↓
+"Hello..."
+ ↓
+"Hello! How..."
+ ↓
+"Hello! How can I..."
+ ↓
+"Hello! How can I help..."
+ ↓
+Complete response
+```
+
+This creates a more natural ChatGPT-style experience.
+
+Groq also supports streaming chat completions through its API.
+
+---
+
+# 🗄️ DATA ARCHITECTURE
+
+The application uses PostgreSQL for persistent data.
+
+Conceptually:
+
+```text
+                    PostgreSQL
+                        │
+          ┌─────────────┼──────────────┐
+          │             │              │
+          ▼             ▼              ▼
+    Conversations    Knowledge       Memory
+          │             │              │
+          ▼             ▼              ▼
+       Messages      Documents      Summaries
+                                     
+                        │
+                        ▼
+                    pgvector
+                        │
+                        ▼
+                 Semantic Retrieval
+```
+
+---
+
+# 🛠️ TECH STACK
+
+| Layer                      | Technology              |
+| -------------------------- | ----------------------- |
+| 🎨 Frontend                | HTML5, CSS3, JavaScript |
+| ⚙️ Backend                 | Node.js, Express.js     |
+| 🗄️ Database               | PostgreSQL              |
+| 🔎 Vector Search           | pgvector                |
+| 🔄 Automation              | n8n                     |
+| 🧠 LLM                     | Llama 3.3 70B           |
+| ⚡ AI Inference             | Groq API                |
+| 🐳 Containers              | Docker                  |
+| ☁️ Deployment              | Render                  |
+| ☁️ Database Infrastructure | Supabase                |
+| 🔐 Configuration           | Environment Variables   |
+| 📡 Communication           | REST APIs / Webhooks    |
+
+---
+
+# 📂 PROJECT STRUCTURE
+
+```text
 ARK AI
 │
-├── backend
+├── backend/
 │   │
-│   ├── src
-│   │   │
-│   │   ├── config
-│   │   │     └── env.js
-│   │   │
-│   │   ├── controllers
-│   │   │     └── chatController.js
-│   │   │
-│   │   ├── services
-│   │   │     └── ollamaService.js
-│   │   │
-│   │   ├── routes
-│   │   │     └── chatRoutes.js
-│   │   │
-│   │   ├── middleware
-│   │   │     └── errorHandler.js
-│   │   │
-│   │   ├── database
-│   │   │     └── postgres.js
-│   │   │
-│   │   ├── prompts
-│   │   │     └── systemPrompt.js
-│   │   │
-│   │   ├── utils
-│   │   │     └── logger.js
-│   │   │
-│   │   └── app.js
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── database/
+│   │   ├── middleware/
+│   │   ├── prompts/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
 │   │
 │   ├── server.js
 │   ├── package.json
@@ -174,283 +760,637 @@ ARK AI
 │   ├── .env.example
 │   └── .gitignore
 │
-├── frontend
-│   ├── assets
+├── frontend/
+│   ├── assets/
 │   ├── index.html
 │   ├── script.js
 │   └── style.css
 │
-├── workflows
+├── workflows/
 │   └── ark-support.json
 │
-└── README.md
+├── README.md
+└── LICENSE
+```
+
+> The exact file structure may evolve as ARK AI continues development.
+
+---
+
+# 💻 RUN ARK AI LOCALLY
+
+Want to explore the project yourself?
+
+## 1️⃣ Prerequisites
+
+Install:
+
+* Node.js
+* npm
+* PostgreSQL
+* Docker
+* n8n
+* Git
+
+For the current AI provider configuration, you'll also need a Groq API key.
+
+---
+
+# 📥 2️⃣ Clone the Repository
+
+Open your terminal:
+
+```bash
+git clone https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
+```
+
+Move into the project:
+
+```bash
+cd ark-ai-customer-support-assistant
+```
+
+Verify:
+
+```bash
+git status
 ```
 
 ---
 
-# 🧠 Conversation Memory Flow
-
-```
-User Message
-
-↓
-
-Express API
-
-↓
-
-n8n Workflow
-
-↓
-
-Store User Message
-
-↓
-
-Retrieve Previous Messages
-
-↓
-
-Rolling Context Window
-
-↓
-
-Build AI Prompt
-
-↓
-
-Ollama (Qwen3 8B)
-
-↓
-
-Store AI Response
-
-↓
-
-Return Response
-
-↓
-
-Frontend
-```
-
----
-
-# 🛠 Tech Stack
-
-| Layer | Technology |
-|---------|------------|
-| Frontend | HTML5, CSS3, JavaScript |
-| Backend | Node.js, Express.js |
-| Automation | n8n |
-| AI | Ollama running Qwen3 8B (local inference, `think: false` mode) |
-| Database | PostgreSQL — `messages` (conversation history), `support_tickets` (ticket log) |
-| Tunneling | ngrok (for exposing local n8n webhook) |
- 
----
- ## Known Issues
-
-- **No authentication on session IDs.** Session IDs are generated client-side and stored in `localStorage` with no server-side validation. Anyone who obtains or guesses a session ID can read or append to that conversation's history. Acceptable for a portfolio v1; would need fixing before any real deployment.
-
-
----
- 
-## Setup
- 
-### Prerequisites
- 
-- Node.js and npm
-- Docker (for PostgreSQL)
-- n8n instance (self-hosted or Docker)
-- Ollama installed locally with `qwen3:8b` pulled
-- ngrok account (for exposing local n8n webhook)
-### Steps
- 
-1. Clone this repo:
-```
-   git clone https://github.com/armaankhantech/ark-ai-customer-support-assistant.git
-   cd ark-ai-customer-support-assistant
-```
-
----
-
-## 2. Install Backend Dependencies
+# 📦 3️⃣ Install Backend Dependencies
 
 ```bash
 cd backend
+```
 
+Then:
+
+```bash
 npm install
 ```
 
 ---
 
-## 3. Install Ollama
+# 🔐 4️⃣ Create Environment Variables
 
-Download Ollama and pull the model:
+Create:
 
-```bash
-ollama pull qwen3:8b
-```
-
-Start Ollama:
-
-```bash
-ollama serve
-```
-
----
-
-## 4. Start PostgreSQL
-
-Run PostgreSQL locally or using Docker.
-
-Create required tables:
-
-- messages
-- support_tickets
-
----
-
-## 5. Import n8n Workflow
-
-Import
-
-```
-workflows/ark-support.json
-```
-
-into your n8n instance.
-
----
-
-## 6. Create Environment Variables
-
-Create
-
-```
+```text
 backend/.env
 ```
 
-Example:
+Use `.env.example` as your template.
+
+Example structure:
 
 ```env
 PORT=3000
 
-N8N_WEBHOOK_URL=https://your-ngrok-url/webhook/ark-support
+GROQ_API_KEY=your_groq_api_key
 
-POSTGRES_HOST=localhost
+DATABASE_URL=your_postgresql_connection_string
 
-POSTGRES_USER=postgres
+N8N_WEBHOOK_URL=your_n8n_webhook_url
+```
 
-POSTGRES_PASSWORD=your_password
+### 🚨 IMPORTANT
 
-POSTGRES_DB=ark_ai
+Never commit:
 
-OLLAMA_URL=http://localhost:11434
+```text
+.env
+```
+
+to GitHub.
+
+Never put real API keys inside:
+
+```text
+README.md
+JavaScript files
+n8n workflows
+screenshots
+Git commits
 ```
 
 ---
 
-## 7. Start Express Server
+# 🗄️ 5️⃣ Configure PostgreSQL
+
+Create your PostgreSQL database.
+
+Then configure the required database schema used by ARK AI.
+
+The database is responsible for persistent application data such as:
+
+```text
+Conversation data
+Knowledge data
+Memory
+Vector data
+Support-related records
+```
+
+> Use the current SQL/schema files in the repository as the source of truth for the V1.0 database structure.
+
+---
+
+# 🔄 6️⃣ Configure n8n
+
+Start your self-hosted n8n instance.
+
+Import the workflow from:
+
+```text
+workflows/ark-support.json
+```
+
+Then configure the required credentials and webhook settings.
+
+Your architecture should look approximately like:
+
+```text
+Express
+   ↓
+n8n Webhook
+   ↓
+ARK AI Workflow
+   ↓
+Database / Retrieval / Memory
+   ↓
+LLM
+```
+
+---
+
+# 🧠 7️⃣ Configure Groq
+
+Create your own Groq API key.
+
+Then add it to:
+
+```text
+backend/.env
+```
+
+```env
+GROQ_API_KEY=your_key_here
+```
+
+The current ARK AI model configuration uses:
+
+```text
+llama-3.3-70b-versatile
+```
+
+Do **not** put your API key directly in source code.
+
+---
+
+# ▶️ 8️⃣ Start the Backend
+
+From:
+
+```text
+backend/
+```
+
+run:
 
 ```bash
 node server.js
 ```
 
----
+Your backend should start on:
 
-## 8. Open Frontend
-
-Open
-
+```text
+http://localhost:3000
 ```
-frontend/index.html
-```
-
-inside your browser.
 
 ---
 
-# 🔄 Request Flow
+# 🌐 9️⃣ Open the Frontend
 
+Open the frontend through a local development server rather than relying on `file://` when possible.
+
+For example, using VS Code's Live Server or another local static server:
+
+```text
+frontend/
 ```
-User
 
-↓
+Then open the displayed local URL.
 
+---
+
+# 🩺 1️⃣0️⃣ Test the Backend
+
+Check:
+
+```text
+GET /health
+```
+
+Expected behavior:
+
+```text
+Backend
+  ↓
+Health endpoint
+  ↓
+Healthy response
+```
+
+Then test the chat endpoint through the frontend.
+
+---
+
+# 🧪 TESTING CHECKLIST
+
+Before considering a local deployment successful:
+
+### Basic
+
+* [ ] Backend starts
+* [ ] Frontend loads
+* [ ] `/health` responds
+* [ ] Chat request succeeds
+
+### Memory
+
+* [ ] Session is created
+* [ ] Previous messages are retrieved
+* [ ] Follow-up questions use context
+
+### Knowledge
+
+* [ ] Business-specific questions retrieve relevant data
+* [ ] RAG returns relevant information
+* [ ] Unknown information is handled safely
+
+### Streaming
+
+* [ ] Response begins streaming
+* [ ] UI updates progressively
+* [ ] Final response renders correctly
+
+### Error Handling
+
+* [ ] Invalid request handled
+* [ ] Missing configuration handled
+* [ ] AI provider failure handled
+* [ ] Database failure handled
+
+---
+
+# 📊 PERFORMANCE & ENGINEERING JOURNEY
+
+ARK AI was not built in one attempt.
+
+The system went through multiple optimization cycles.
+
+### Earlier architecture
+
+```text
+Large Prompt
++
+Large Context
++
+Larger Local Model
++
+More Processing
+```
+
+This resulted in slower responses.
+
+### Optimized architecture
+
+```text
+User Question
+      ↓
+Relevant Context
+      ↓
+Smaller / Better Prompt
+      ↓
+Optimized Workflow
+      ↓
+Faster Inference
+      ↓
+Streaming Response
+```
+
+### Biggest performance lesson
+
+> **Profile first. Optimize second.**
+
+During development, inference and pipeline timing were benchmarked to identify where latency was actually being introduced rather than assuming that n8n, the database, or the model was automatically responsible.
+
+---
+
+# 🧠 WHAT I LEARNED BUILDING ARK AI
+
+Building ARK AI taught me that an AI application is much more than an LLM API call.
+
+### 1. AI is a system
+
+```text
+LLM
++
+Database
++
+Retrieval
++
+Memory
++
+Backend
++
+Automation
++
 Frontend
+=
+AI Application
+```
 
-↓
+### 2. Context matters
 
-Express Route
+Giving an LLM more information is not always better.
 
-↓
+The right information at the right time is more useful.
 
-Controller
+### 3. Memory is an architecture problem
 
-↓
+Conversation memory requires:
 
-Service
+* Session management
+* Data persistence
+* Retrieval
+* Context selection
+* Summarization
+* Prompt construction
 
-↓
+### 4. RAG is not just vector search
 
-n8n Workflow
+A useful RAG system requires:
 
-↓
+```text
+Question
+ ↓
+Retrieval
+ ↓
+Relevance
+ ↓
+Context
+ ↓
+Prompt
+ ↓
+Generation
+```
 
-PostgreSQL
+### 5. Performance requires profiling
 
-↓
+Instead of guessing:
 
-Ollama
+> "n8n is slow."
 
-↓
+or:
 
-Express
+> "The database is slow."
 
-↓
+Measure the pipeline and identify the actual bottleneck.
 
-Frontend
+### 6. Production thinking starts before production
+
+Even a portfolio project should consider:
+
+* Error handling
+* Security
+* Configuration
+* Logging
+* Memory
+* Scalability
+* Deployment
+* Observability
+* Failure scenarios
+
+---
+
+# ⚠️ CURRENT LIMITATIONS
+
+ARK AI V1.0 is **not a production SaaS platform**.
+
+Current limitations include:
+
+### Infrastructure
+
+* Render Free cold starts
+* Free-tier resource limits
+* Self-hosted n8n availability
+* External API quotas
+* Limited database resources
+
+### Security
+
+The V1.0 portfolio architecture should not be treated as a hardened enterprise deployment.
+
+Future production work should include stronger:
+
+* Authentication
+* Authorization
+* Session validation
+* Rate limiting
+* Abuse prevention
+* Secret management
+* Security monitoring
+* Audit logging
+
+### Scalability
+
+The current free infrastructure is designed for:
+
+> **Demonstration → Portfolio → Learning → Recruiter/Client Evaluation**
+
+not:
+
+> **Thousands of concurrent production customers.**
+
+---
+
+# 🛡️ SECURITY PRINCIPLES
+
+Never commit:
+
+```text
+.env
+API keys
+Database passwords
+OAuth secrets
+Private tokens
+Production credentials
+```
+
+Use:
+
+```text
+.env
+```
+
+locally and:
+
+```text
+.env.example
+```
+
+for documentation.
+
+Example:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+DATABASE_URL=your_database_url_here
+N8N_WEBHOOK_URL=your_webhook_url_here
 ```
 
 ---
 
-# 📸 Screenshots
+# 🗺️ ROADMAP
 
-## Chat Interface
-```
+## ✅ V1.0 — Completed
 
-```
-<img width="634" height="936" alt="Image" src="https://github.com/user-attachments/assets/6d208fd8-69f2-4397-96af-9daade3f1fd6" />
-<img width="1099" height="910" alt="Image" src="https://github.com/user-attachments/assets/4aacd55f-4b37-4762-acb4-349e96627646" />
-<img width="1911" height="929" alt="Image" src="https://github.com/user-attachments/assets/2e71caaf-d7b0-4a33-a4da-be5932dddb7a" />
-<img width="1919" height="915" alt="Image" src="https://github.com/user-attachments/assets/15a01f09-33d9-4f48-a48f-a58d30ed5afa" />
+* [x] Responsive AI chat interface
+* [x] Express backend
+* [x] PostgreSQL integration
+* [x] Session-based conversations
+* [x] Conversation memory
+* [x] Long-term memory
+* [x] RAG
+* [x] pgvector
+* [x] Context engine
+* [x] Prompt engineering
+* [x] Streaming responses
+* [x] n8n workflow automation
+* [x] LLM integration
+* [x] Performance optimization
+* [x] Production-oriented architecture
+* [x] Public deployment
+* [x] GitHub V1.0 release
 
-## 📚 What I Learned
- 
-Building AI memory is not just storing messages. It requires session management, conversation retrieval, prompt engineering, response persistence, and workflow orchestration.
- 
-Grounding an AI in trusted data is not just adding more context to a prompt. It requires a single source of truth, a clear path for that data to reach the model on every request, and an explicit instruction for the model to admit what it doesn't know instead of guessing.
- 
-Building a streaming, markdown-aware chat UI also surfaced a subtler lesson: rendering partial markdown character-by-character means intermediate states (like a half-typed code fence language tag) are technically invalid input to downstream parsers, and need to be handled deliberately rather than assumed away.
- 
+## 🔮 Future Versions
+
+Potential future improvements:
+
+* [ ] Authentication
+* [ ] Server-side session validation
+* [ ] API rate limiting
+* [ ] Advanced monitoring
+* [ ] Better observability
+* [ ] Admin dashboard
+* [ ] Analytics
+* [ ] Multi-business support
+* [ ] Improved document ingestion
+* [ ] Advanced RAG evaluation
+* [ ] Automated testing
+* [ ] Production-grade infrastructure
+* [ ] Horizontal scaling
+
 ---
 
- ## Roadmap
- 
-- [ ] Re-implement category classification without breaking conversation memory
-- [ ] Add authentication / server-side validation for session IDs
-- [ ] Add basic rate limiting on Express layer
-- [ ] Deploy frontend to GitHub Pages
-- [ ] Conversation summarization for long sessions beyond the rolling window
-- [ ] Move business knowledge from static file to database-backed config
+# 📚 RESOURCES
+
+### AI / LLM
+
+* Groq Documentation
+  https://console.groq.com/docs
+
+* Llama 3.3 70B Documentation
+  https://console.groq.com/docs/model/llama-3.3-70b-versatile
+
+### Database
+
+* PostgreSQL
+  https://www.postgresql.org/
+
+* Supabase
+  https://supabase.com/docs
+
+* pgvector
+  https://github.com/pgvector/pgvector
+
+### Automation
+
+* n8n Documentation
+  https://docs.n8n.io/
+
+### Deployment
+
+* Render Documentation
+  https://render.com/docs
+
+### Development
+
+* Node.js
+  https://nodejs.org/
+
+* Express.js
+  https://expressjs.com/
+
+* Docker
+  https://docs.docker.com/
 
 ---
- 
-## Author
- 
-Armaan Khan — building in public, AI Automation Engineering journey.
 
-[GitHub](https://github.com/armaankhantech)
-· [Twitter/X](https://twitter.com/armaankhantech)
- 
+# 📜 VERSION
+
+Current release:
+
+```text
+ARK AI V1.0.0
+```
+
+Release:
+
+**ARK AI V1.0 — Public Release**
+
+The V1.0 release represents the first publicly deployed milestone of the project.
+
+---
+
+# 👩‍💻 AUTHOR
+
+## Armaan Khan
+
+Building in public while learning and developing in:
+
+**AI Automation • AI Engineering • Backend Systems • AI Applications**
+
+### Connect with me
+
+* 💻 GitHub: https://github.com/armaankhantech
+* 💼 LinkedIn: https://www.linkedin.com/in/armaankhan-tech/
+* 🐦 X / Twitter: https://twitter.com/armaankhantech
+
+---
+
+# ⭐ SUPPORT THE PROJECT
+
+If ARK AI helped you understand how AI applications can be built around:
+
+**RAG + Memory + Automation + Databases + LLMs**
+
+consider giving the repository a ⭐ on GitHub.
+
+If you have feedback:
+
+> **What would you improve first in ARK AI?**
+
+I'd love to hear it.
+
+---
+
+<p align="center">
+
+### 🚀 Build → Learn → Debug → Optimize → Deploy → Repeat
+
+**ARK AI V1.0**
+
+</p>
