@@ -297,15 +297,7 @@ ARK AI uses PostgreSQL infrastructure through Supabase for persistent applicatio
 
 The current Supabase Free Plan includes:
 
-| Resource                  |           Free Plan |
-| ------------------------- | ------------------: |
-| PostgreSQL Database       |          **500 MB** |
-| Egress                    |            **5 GB** |
-| File Storage              |            **1 GB** |
-| Cached Egress             |            **5 GB** |
-| Monthly Active Users      |          **50,000** |
-| Realtime Messages         | **2 million/month** |
-| Peak Realtime Connections |             **200** |
+
 
 Supabase also states that Free projects can be paused after **one week of inactivity**.
 
