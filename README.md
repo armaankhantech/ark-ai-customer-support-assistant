@@ -104,6 +104,13 @@ ARK AI becomes available
 Normal usage
 ```
 
+### What this means
+
+If the website appears to take a while to load initially, **this is expected behavior of the Render Free tier and does not necessarily indicate an application failure.**
+
+Once the service is running, subsequent requests should not experience that initial cold-start delay.
+
+Render also notes that Free Web Services have a **750-hour monthly included runtime allowance**, plus other free-tier restrictions.
 
 
 **Official documentation:**
