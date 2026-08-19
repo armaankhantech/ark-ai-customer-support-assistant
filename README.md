@@ -1,4 +1,4 @@
-# 🤖 ARK AI — AI Customer Support Assistant
+# 🤖 ARK AI — AI Customer Support Assistant. 
 
 > **ARK AI V1.0 — Public Release 🚀**
 
