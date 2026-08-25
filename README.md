@@ -76,7 +76,9 @@ Built end-to-end as a **production-oriented portfolio project** using modern AI,
 
 # ⚠️ READ THIS BEFORE USING THE LIVE DEMO
 
-
+> **ARK AI V1.0 is a portfolio and demonstration project.**
+>
+> It is intentionally deployed using **free-tier and self-hosted infrastructure**. The application is designed to demonstrate AI engineering, automation, backend architecture, RAG, memory, and deployment  **not to provide production-grade service guarantees**.
 
 ## 💤 1. Render Free-Tier Cold Start
 
