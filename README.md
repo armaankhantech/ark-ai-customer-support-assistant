@@ -1,6 +1,6 @@
 # 🤖 ARK AI — AI Customer Support Assistant. 
 
-> **ARK AI V1.0 — Public Release 🚀**
+> **ARK AI V1.0 — Public Release 🚀** 
 
 An AI-powered customer support assistant designed to answer business-specific questions using **company knowledge, RAG, conversation memory, long-term memory, context engineering, and streaming AI responses**.
 
