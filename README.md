@@ -82,11 +82,7 @@ Built end-to-end as a **production-oriented portfolio project** using modern AI,
 
 ## 💤 1. Render Free-Tier Cold Start
 
-The public backend is deployed using **Render's Free Web Service**.
 
-Render automatically spins down a Free Web Service after **15 minutes without inbound traffic**.
-
-When someone opens ARK AI after the service has been inactive, the first request wakes the service back up. Render states that this startup normally takes **about one minute**.
 
 Therefore:
 
